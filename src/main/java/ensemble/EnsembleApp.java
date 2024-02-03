@@ -1,5 +1,6 @@
 package ensemble;
 
+import ensemble.control.Popover;
 import ensemble.control.SearchBox;
 import ensemble.control.TitledToolBar;
 import javafx.application.Application;
@@ -7,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -24,6 +26,7 @@ public class EnsembleApp extends Application {
     private Button homeButton;
     private ToggleButton listButton;
     private SearchBox searchBox = new SearchBox();
+    private Popover simpleListPopover;
 
     private static final int TOOL_BAR_BUTTON_SIZE = 30;
 
@@ -74,7 +77,21 @@ public class EnsembleApp extends Application {
 
         //TODO create pageBrowser
 
+        simpleListPopover = new Popover();
+        simpleListPopover.setPrefWidth(440);
+        root.getChildren().add(simpleListPopover);
+        SamplePopoverTreeList rootPage = new SamplePopoverTreeList();
 
+        listButton.setOnMouseClicked((MouseEvent e) -> {
+            if(simpleListPopover.isVisible()) {
+                simpleListPopover.hide();
+            }else {
+                simpleListPopover.pushPage(rootPage);
+                simpleListPopover.show(() -> {
+                    listButton.setSelected(false);
+                });
+            }
+        });
 
     }
 

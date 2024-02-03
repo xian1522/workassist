@@ -1,9 +1,14 @@
 package ensemble.control;
 
-import javafx.animation.Animation;
+import javafx.animation.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
@@ -11,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.util.LinkedList;
 
@@ -30,8 +36,34 @@ public class Popover extends Region implements EventHandler<Event> {
     private Runnable onHideCallback = null;
     private double maxPopupHeight = -1;
 
+    private DoubleProperty properoverHeight = new SimpleDoubleProperty(40) {
+        @Override
+        protected void invalidated() {
+            requestLayout();
+        }
+    };
+
 
     public Popover() {
+        getStyleClass().setAll("popover");
+        frameBorder.getStyleClass().setAll("popover-frame");
+        frameBorder.setMouseTransparent(true);
+        leftButton.setOnMouseClicked(this);
+        leftButton.getStyleClass().add("popover-left-button");
+        leftButton.setMinWidth(USE_PREF_SIZE);
+        rightButton.setOnMouseClicked(this);
+        rightButton.getStyleClass().add("popover-right-button");
+        rightButton.setMinWidth(USE_PREF_SIZE);
+        pagesClipRect.setSmooth(false);
+        pagesPane.setClip(pagesClipRect);
+        titlesClipRect.setSmooth(false);
+        titlesPane.setClip(titlesClipRect);
+        getChildren().addAll(pagesPane, frameBorder, titlesPane, leftButton, rightButton);
+        setVisible(false);
+        setOpacity(0);
+        setScaleX(.8);
+        setScaleY(.8);
+
         popoverHideHandler = (MouseEvent t) -> {
             Point2D mouseInFileterPane = sceneToLocal(t.getX(), t.getY());
             if(mouseInFileterPane.getX() < 0 || mouseInFileterPane.getX() > getWidth() ||
@@ -42,13 +74,108 @@ public class Popover extends Region implements EventHandler<Event> {
         };
     }
 
+    @Override
+    protected void layoutChildren() {
+        if(maxPopupHeight == -1) {
+            maxPopupHeight = getScene().getWidth() - 100;
+        }
+        Insets insets = getInsets();
+        final double width = getWidth();
+        final double height = getHeight();
+        final double top = insets.getTop();
+        final double bottom = insets.getBottom();
+        final double left = insets.getLeft();
+        final double right = insets.getRight();
+
+        double pageWidth = width - left - right;
+        double pageHeight = height - top - bottom;
+
+        frameBorder.resize(width, height);
+
+        pagesPane.resizeRelocate(left, top, pageWidth, pageHeight);
+        pagesClipRect.setWidth(pageWidth);
+        pagesClipRect.setHeight(pageHeight);
+
+        double pageX = 0;
+        for (Node page : pagesPane.getChildren()) {
+            page.resizeRelocate(pageX, 0, pageWidth, pageHeight);
+            pageX += pageWidth + PAGE_GAP;
+        }
+
+        double buttonHeight = leftButton.prefHeight(-1);
+        if(buttonHeight < 30) buttonHeight = 30;
+        final double buttonTop = (top - buttonHeight) / 2.0;
+        final double leftButtonWidth = snapSize(leftButton.prefWidth(-1));
+        leftButton.resizeRelocate(left, buttonTop, leftButtonWidth, buttonHeight);
+        final double rightButtonWidth = snapSize(rightButton.prefWidth(-1));
+        rightButton.resizeRelocate(width - right - rightButtonWidth, buttonTop, rightButtonWidth, buttonHeight);
+
+        final double leftButtonRight = leftButton.isVisible() ? left + leftButtonWidth : left;
+        final double rightButtonLeft = rightButton.isVisible() ? right + rightButtonWidth : right;
+        titlesClipRect.setX(leftButtonRight);
+        titlesClipRect.setWidth(width - leftButtonRight - rightButtonLeft);
+        titlesClipRect.setHeight(top);
+
+        if(title != null) {
+            title.setTranslateY((int) (top / 2d));
+        }
+    }
+
     private Animation fadeAnimation = null;
 
-    public void show(Runnable onHideCallback) {
+    public void show() {
+        show(null);
+    }
 
+    public void show(Runnable onHideCallback) {
+        if(!isVisible() || fadeAnimation != null) {
+            this.onHideCallback = onHideCallback;
+            getScene().addEventFilter(MouseEvent.MOUSE_CLICKED, popoverHideHandler);
+            if(fadeAnimation != null) {
+                fadeAnimation.stop();
+                setVisible(true);
+            }else {
+                properoverHeight.setValue(-1);
+                setVisible(true);
+            }
+            FadeTransition fade = new FadeTransition(Duration.seconds(.1), this);
+            fade.setToValue(1.0);
+            fade.setOnFinished((ActionEvent event) -> {
+                fadeAnimation = null;
+            });
+
+            ScaleTransition scale = new ScaleTransition(Duration.seconds(.1), this);
+            scale.setToX(1);
+            scale.setToY(1);
+
+            ParallelTransition tx = new ParallelTransition(fade, scale);
+            fadeAnimation = tx;
+            tx.play();
+        }
     }
     public void hide() {
+        if(isVisible() || fadeAnimation != null) {
+            getScene().removeEventFilter(MouseEvent.MOUSE_CLICKED, popoverHideHandler);
+            if(fadeAnimation != null) {
+                fadeAnimation.stop();
+            }
+            FadeTransition fadeTransition = new FadeTransition(Duration.seconds(.1), this);
+            fadeTransition.setToValue(0);
+            fadeTransition.setOnFinished((ActionEvent event) -> {
+                fadeAnimation = null;
+                setVisible(false);
+                //TODO
+//                clearPages();
+                if(onHideCallback != null) onHideCallback.run();
+            });
+            ScaleTransition scale = new ScaleTransition(Duration.seconds(.1), this);
+            scale.setToX(.8);
+            scale.setToY(.8);
 
+            ParallelTransition parallel = new ParallelTransition(fadeTransition, scale);
+            fadeAnimation = parallel;
+            fadeAnimation.play();
+        }
     }
 
 
@@ -57,8 +184,54 @@ public class Popover extends Region implements EventHandler<Event> {
 
     }
 
+    public final void pushPage(final Page page) {
+        final Node pageNode = page.getPageNode();
+        pageNode.setManaged(false);
+        pagesPane.getChildren().add(pageNode);
+        Insets insets = getInsets();
+        int pageWidth = (int)(prefWidth(-1) - insets.getLeft() - insets.getRight());
+        int newPageX = (pageWidth + PAGE_GAP) * pages.size();
+        leftButton.setVisible(page.leftButtonText() != null);
+        leftButton.setText(page.leftButtonText());
+        rightButton.setVisible(page.rightButtonText() != null);
+        rightButton.setText(page.rightButtonText());
 
-    private static interface Page {
+        title = new Text(page.getPageTitle());
+        title.getStyleClass().add("popover-title");
+        title.setTextOrigin(VPos.CENTER);
+        title.setTranslateX(newPageX + (int)((pageWidth + title.getLayoutBounds().getWidth()) / 2D));
+        titlesPane.getChildren().add(title);
+
+        if(!pages.isEmpty() && isVisible()) {
+            final Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.millis(350), (ActionEvent t) -> {
+                        pagesPane.setCache(false);
+                        resizePopoverToNewPage(pageNode);
+                    },
+                            new KeyValue(pagesPane.translateXProperty(), -newPageX, Interpolator.EASE_BOTH),
+                            new KeyValue(titlesPane.translateXProperty(), -newPageX, Interpolator.EASE_BOTH),
+                            new KeyValue(pagesClipRect.xProperty(), newPageX, Interpolator.EASE_BOTH),
+                            new KeyValue(titlesClipRect.translateXProperty(), newPageX, Interpolator.EASE_BOTH)
+                    )
+            );
+            timeline.play();
+        }
+        page.setPopover(this);
+        page.handleShown();
+        pages.add(page);
+    }
+
+    private void resizePopoverToNewPage(final Node newPageNode) {
+        Insets insets = getInsets();
+        final double width = prefWidth(-1);
+        final double contentWidth = width - insets.getLeft() - insets.getRight();
+        double h = newPageNode.prefWidth(contentWidth);
+        h += insets.getTop() + insets.getBottom();
+        new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(properoverHeight, h, Interpolator.EASE_BOTH))).play();
+    }
+
+
+    public static interface Page {
         public void setPopover(Popover popover);
         public Popover getPopover();
 
