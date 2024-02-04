@@ -36,7 +36,7 @@ public class Popover extends Region implements EventHandler<Event> {
     private Runnable onHideCallback = null;
     private double maxPopupHeight = -1;
 
-    private DoubleProperty properoverHeight = new SimpleDoubleProperty(40) {
+    private DoubleProperty popoverHeight = new SimpleDoubleProperty(40) {
         @Override
         protected void invalidated() {
             requestLayout();
@@ -121,6 +121,21 @@ public class Popover extends Region implements EventHandler<Event> {
         }
     }
 
+    public final void clearPages() {
+        while (!pages.isEmpty()) {
+            pages.pop().handleHidden();
+        }
+        pagesPane.getChildren().clear();
+        titlesPane.getChildren().clear();
+        pagesClipRect.setX(0);
+        pagesClipRect.setWidth(400);
+        pagesClipRect.setHeight(400);
+        popoverHeight.set(400);
+        pagesPane.setTranslateX(0);
+        titlesPane.setTranslateX(0);
+        titlesClipRect.setTranslateX(0);
+    }
+
     private Animation fadeAnimation = null;
 
     public void show() {
@@ -135,7 +150,7 @@ public class Popover extends Region implements EventHandler<Event> {
                 fadeAnimation.stop();
                 setVisible(true);
             }else {
-                properoverHeight.setValue(-1);
+                popoverHeight.setValue(-1);
                 setVisible(true);
             }
             FadeTransition fade = new FadeTransition(Duration.seconds(.1), this);
@@ -178,6 +193,40 @@ public class Popover extends Region implements EventHandler<Event> {
         }
     }
 
+    @Override
+    protected double computeMinHeight(double width) {
+        Insets insets = getInsets();
+        return insets.getLeft() + 100 + insets.getRight();
+    }
+
+    @Override
+    protected double computePrefHeight(double width) {
+        double minHeight = minHeight(-1);
+        double maxHeight = maxHeight(-1);
+        double prefHeight = popoverHeight.get();
+        if(prefHeight == -1) {
+            Page page = pages.getFirst();
+            if(page != null) {
+                Insets insets = getInsets();
+                if(width == -1) {
+                    width = prefWidth(-1);
+                }
+                double contentWidth = width - insets.getRight() - insets.getLeft();
+                double contentHeight = page.getPageNode().prefHeight(contentWidth);
+                prefHeight =  insets.getTop() + contentHeight + insets.getBottom();
+                popoverHeight.set(prefHeight);
+            }else {
+                prefHeight = minHeight;
+            }
+        }
+        return boundedSize(minHeight, prefHeight, maxHeight);
+    }
+
+    static double boundedSize(double min, double pref, double max) {
+        double a = pref >= min ? pref : min;
+        double b = min >= max ? min : max;
+        return a <= b ? a : b;
+    }
 
     @Override
     public void handle(Event event) {
@@ -227,7 +276,7 @@ public class Popover extends Region implements EventHandler<Event> {
         final double contentWidth = width - insets.getLeft() - insets.getRight();
         double h = newPageNode.prefWidth(contentWidth);
         h += insets.getTop() + insets.getBottom();
-        new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(properoverHeight, h, Interpolator.EASE_BOTH))).play();
+        new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(popoverHeight, h, Interpolator.EASE_BOTH))).play();
     }
 
 

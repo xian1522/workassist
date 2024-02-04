@@ -86,6 +86,7 @@ public class EnsembleApp extends Application {
             if(simpleListPopover.isVisible()) {
                 simpleListPopover.hide();
             }else {
+                simpleListPopover.clearPages();
                 simpleListPopover.pushPage(rootPage);
                 simpleListPopover.show(() -> {
                     listButton.setSelected(false);
