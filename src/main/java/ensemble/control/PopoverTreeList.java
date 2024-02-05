@@ -21,4 +21,6 @@ public class PopoverTreeList<T> extends ListView<T> implements Callback<ListView
     public ListCell<T> call(ListView<T> param) {
         return null;
     }
+
+    protected void itemClicked(T item) {}
 }

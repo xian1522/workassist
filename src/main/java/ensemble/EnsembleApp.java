@@ -27,6 +27,7 @@ public class EnsembleApp extends Application {
     private ToggleButton listButton;
     private SearchBox searchBox = new SearchBox();
     private Popover simpleListPopover;
+    private PageBrowser pageBrowser;
 
     private static final int TOOL_BAR_BUTTON_SIZE = 30;
 
@@ -76,11 +77,16 @@ public class EnsembleApp extends Application {
         root.getChildren().add(titledToolBar);
 
         //TODO create pageBrowser
+        pageBrowser = new PageBrowser();
 
         simpleListPopover = new Popover();
         simpleListPopover.setPrefWidth(440);
         root.getChildren().add(simpleListPopover);
-        SamplePopoverTreeList rootPage = new SamplePopoverTreeList();
+
+        SampleCategory category = new SampleCategory("ROOT", null, null,
+                new SampleCategory[]{new SampleCategory("Animation", new SampleInfo[]{new SampleInfo("TT","","","",null, null, null)}, null, null)});
+
+        SamplePopoverTreeList rootPage = new SamplePopoverTreeList(category, pageBrowser);
 
         listButton.setOnMouseClicked((MouseEvent e) -> {
             if(simpleListPopover.isVisible()) {
