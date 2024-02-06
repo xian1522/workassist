@@ -102,6 +102,7 @@ public class SamplePopoverTreeList extends PopoverTreeList implements Popover.Pa
             popover.pushPage(new SamplePopoverTreeList((SampleCategory)item, pageBrowser));
         }else {
             popover.hide();
+            pageBrowser.goToSample((SampleInfo)item);
         }
     }
 

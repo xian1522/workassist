@@ -3,6 +3,7 @@ package ensemble;
 import ensemble.control.Popover;
 import ensemble.control.SearchBox;
 import ensemble.control.TitledToolBar;
+import generated.Samples;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -40,7 +41,6 @@ public class EnsembleApp extends Application {
                 final double w = getWidth();
                 final double h = getHeight();
                 final double toolBarHeight = titledToolBar.getPrefHeight();
-                System.out.println("toolBarHeight: " + toolBarHeight);
                 titledToolBar.resizeRelocate(0, 0, w, 40);
             }
         };
@@ -78,15 +78,12 @@ public class EnsembleApp extends Application {
 
         //TODO create pageBrowser
         pageBrowser = new PageBrowser();
-
+        root.getChildren().add(0, pageBrowser);
         simpleListPopover = new Popover();
         simpleListPopover.setPrefWidth(440);
         root.getChildren().add(simpleListPopover);
 
-        SampleCategory category = new SampleCategory("ROOT", null, null,
-                new SampleCategory[]{new SampleCategory("Animation", new SampleInfo[]{new SampleInfo("TT","","","",null, null, null)}, null, null)});
-
-        SamplePopoverTreeList rootPage = new SamplePopoverTreeList(category, pageBrowser);
+        SamplePopoverTreeList rootPage = new SamplePopoverTreeList(Samples.ROOT, pageBrowser);
 
         listButton.setOnMouseClicked((MouseEvent e) -> {
             if(simpleListPopover.isVisible()) {
