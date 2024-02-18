@@ -42,7 +42,6 @@ public class SamplePageContent extends Region {
                 description.resizeRelocate(INDENT, INDENT, w, h);
             }else{
                 description.resizeRelocate(INDENT, INDENT, w, maxHeight);
-                System.out.println("isvisible:" + description.isVisible());
             }
         }
     }

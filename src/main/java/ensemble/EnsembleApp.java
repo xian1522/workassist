@@ -5,7 +5,9 @@ import ensemble.control.SearchBox;
 import ensemble.control.TitledToolBar;
 import generated.Samples;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
@@ -40,8 +42,15 @@ public class EnsembleApp extends Application {
                 super.layoutChildren();
                 final double w = getWidth();
                 final double h = getHeight();
-                final double toolBarHeight = titledToolBar.getPrefHeight();
-                titledToolBar.resizeRelocate(0, 0, w, 40);
+                final double toolBarHeight = titledToolBar.prefHeight(w);
+                titledToolBar.resizeRelocate(0, 0, w, toolBarHeight);
+
+                pageBrowser.setLayoutY(toolBarHeight);
+                pageBrowser.resize(w, h - toolBarHeight);
+                simpleListPopover.autosize();
+                Point2D listBtnBottomCenter = listButton.localToScene(listButton.getWidth() / 2, listButton.getHeight());
+                simpleListPopover.setLayoutX((int)(listBtnBottomCenter.getX() - 50));
+                simpleListPopover.setLayoutY((int)(listBtnBottomCenter.getY() + 20));
             }
         };
 
@@ -76,14 +85,29 @@ public class EnsembleApp extends Application {
         titledToolBar.addRightItems(searchBox);
         root.getChildren().add(titledToolBar);
 
-        //TODO create pageBrowser
         pageBrowser = new PageBrowser();
         root.getChildren().add(0, pageBrowser);
+        pageBrowser.goHome();
+
         simpleListPopover = new Popover();
         simpleListPopover.setPrefWidth(440);
         root.getChildren().add(simpleListPopover);
 
         SamplePopoverTreeList rootPage = new SamplePopoverTreeList(Samples.ROOT, pageBrowser);
+
+        forwardButton.disableProperty().bind(pageBrowser.forwardPossibleProperty().not());
+        forwardButton.setOnAction((ActionEvent event) -> {
+            pageBrowser.forward();
+        });
+        backButton.disableProperty().bind(pageBrowser.backPossibleProperty().not());
+        backButton.setOnAction((ActionEvent event) -> {
+            pageBrowser.backward();
+        });
+        homeButton.disableProperty().bind(pageBrowser.atHomeProperty());
+        homeButton.setOnAction((ActionEvent event) -> {
+            pageBrowser.goHome();
+        });
+
 
         listButton.setOnMouseClicked((MouseEvent e) -> {
             if(simpleListPopover.isVisible()) {
