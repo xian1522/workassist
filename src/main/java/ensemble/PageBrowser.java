@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 public class PageBrowser extends Region {
     public static final String HOME_URL = "home";
+    private HomePage homePage;
     private Page currentPage;
     private SamplePage samplePage;
 
@@ -64,6 +65,7 @@ public class PageBrowser extends Region {
     public void goToPage(String url, SampleInfo sampleInfo, boolean updateHistory) {
         Page nextPage = null;
         if(url.equals(HOME_URL)) {
+            nextPage = getHomePage();
         }else if(sampleInfo != null) {
             nextPage = updateSamplePage(sampleInfo, url);
         }else if(url.startsWith("sample://")) {
@@ -96,6 +98,13 @@ public class PageBrowser extends Region {
 
             atHome.set(url.equals(HOME_URL));
         }
+    }
+
+    private Page getHomePage() {
+        if(homePage == null) {
+            homePage = new HomePage(this);
+        }
+        return homePage;
     }
 
     private SamplePage updateSamplePage(SampleInfo sampleInfo, String url) {
