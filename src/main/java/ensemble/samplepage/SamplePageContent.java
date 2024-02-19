@@ -10,6 +10,7 @@ public class SamplePageContent extends Region {
     private SamplePage samplePage;
     private Description description;
     private boolean needsPlayground;
+    private SampleContainer sampleContainer;
 
     public SamplePageContent(final SamplePage samplePage) {
         this.samplePage = samplePage;
@@ -47,6 +48,8 @@ public class SamplePageContent extends Region {
     }
 
     public void update(SampleInfo sampleInfo) {
-        getChildren().setAll(description);
+        sampleContainer = new SampleContainer(samplePage.sampleRuntimeInfoProperty.get().getSampleNode());
+        sampleContainer.getStyleClass().add("sample-page-sample-node");
+        getChildren().setAll(sampleContainer,description);
     }
 }

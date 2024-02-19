@@ -3,6 +3,7 @@ package ensemble.samplepage;
 import ensemble.Page;
 import ensemble.PageBrowser;
 import ensemble.SampleInfo;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -16,6 +17,7 @@ public class SamplePage extends StackPane implements Page {
     static final double INDENT = 8;
 
     final ObjectProperty<SampleInfo> sampleInfoProperty = new SimpleObjectProperty<>();
+    final ObjectProperty<SampleInfo.SampleRuntimeInfo> sampleRuntimeInfoProperty = new SimpleObjectProperty<>();
     final StringProperty titleProperty = new SimpleStringProperty();
     PageBrowser pageBrowser;
 
@@ -36,6 +38,13 @@ public class SamplePage extends StackPane implements Page {
                 }else {
                     return "";
                 }
+            }
+        });
+        sampleRuntimeInfoProperty.bind(new ObjectBinding<SampleInfo.SampleRuntimeInfo>() {
+            {bind(sampleInfoProperty);}
+            @Override
+            protected SampleInfo.SampleRuntimeInfo computeValue() {
+                return sampleInfoProperty.get().buildSampleNode();
             }
         });
 
