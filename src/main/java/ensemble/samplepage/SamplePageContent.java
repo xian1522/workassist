@@ -44,6 +44,27 @@ public class SamplePageContent extends Region {
             }else{
                 description.resizeRelocate(INDENT, INDENT, w, maxHeight);
             }
+        }else {
+            sampleContainer.resizeRelocate(INDENT, INDENT, maxWidth, (getHeight() - 3 * INDENT) / 2);
+            double y = Math.round(getHeight() / 2 + INDENT / 2);
+            if (landscape) {
+                double h = getHeight() - INDENT - y;
+                if (needsPlayground) {
+                    double w = (getWidth() - INDENT * 3) / 2;
+                    description.resizeRelocate(Math.round(INDENT * 2 + w), y, w, h);
+                } else {
+                    description.resizeRelocate(INDENT, y, maxWidth, h);
+                }
+            } else {
+                double w = getWidth() - INDENT * 2;
+                if (needsPlayground) {
+                    double h = (getHeight() - INDENT * 2 - y) / 2;
+                    description.resizeRelocate(INDENT, Math.round(y + h + INDENT), w, h);
+                } else {
+                    double h = getHeight() - INDENT - y;
+                    description.resizeRelocate(INDENT, y, w, h);
+                }
+            }
         }
     }
 

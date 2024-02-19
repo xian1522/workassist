@@ -1,5 +1,6 @@
 package ensemble.samplepage;
 
+import ensemble.SampleInfo;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -21,6 +22,15 @@ public class Description extends VBox {
         description.setMinHeight(Label.USE_PREF_SIZE);
         description.setPadding(new Insets(8, 0, 8, 0));
         getChildren().addAll(descriptionTitle, description);
+
+        samplePage.registerSampleInfoUpdater((SampleInfo sampleInfo) -> {
+            update(sampleInfo);
+            return null;
+        });
+    }
+
+    public void update(SampleInfo sampleInfo) {
+        description.setText(sampleInfo.description);
     }
 
 
