@@ -1,0 +1,22 @@
+
+#driver = oracle.jdbc.driver.OracleDriver
+#url = jdbc:oracle:thin:@192.168.90.213:1521:orcl
+#username = SYJZHG
+#password = SYJZHG
+
+
+driver = com.ibm.db2.jcc.DB2Driver
+url = jdbc:db2://192.168.88.36:60006/TICMDB
+username = ticmusr
+password = joyin123
+
+
+## 可选配置
+# 是否在日志中显示执行的SQL
+showSql = true
+# 是否格式化显示的SQL
+formatSql = false
+# 是否显示SQL参数
+showParams = true
+# 打印SQL的日志等级，默认debug
+sqlLevel = debug

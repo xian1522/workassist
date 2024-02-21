@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ensemble.samples.codegen.CodeGenController">
+   <children>
+      <GridPane fx:id="codegenForm" prefHeight="93.0" prefWidth="600.0" vgap="40.0" AnchorPane.topAnchor="60.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="178.00001525878906" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="468.99998474121094" minWidth="10.0" prefWidth="421.99998474121094" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label prefHeight="15.0" prefWidth="135.0" text="TABLENAME:" GridPane.halignment="RIGHT" GridPane.valignment="CENTER" />
+            <Label prefHeight="15.0" prefWidth="135.0" text="PACKAGEPATH:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <TextField fx:id="tablename" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets right="120.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="packagepath" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets right="120.0" />
+               </GridPane.margin></TextField>
+            <HBox prefHeight="32.0" prefWidth="373.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#generateCode" text="submit">
+                     <HBox.margin>
+                        <Insets left="180.0" right="6.0" top="6.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" text="reset">
+                     <HBox.margin>
+                        <Insets right="6.0" top="6.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
