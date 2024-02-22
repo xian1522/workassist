@@ -9,6 +9,8 @@ import com.joyin.ticm.accmn.kamn.kacomm.KaConstant;
 import com.joyin.ticm.accmn.kamn.model.SysKeepAccount;
 import com.joyin.ticm.accmn.kamn.service.KeepAccountService;
 import com.joyin.ticm.bean.ResultData;
+import com.joyin.ticm.common.constant.Constant;
+import com.joyin.ticm.common.constant.Constant.FlowStateType;
 import com.joyin.ticm.dao.BaseDao;
 import com.joyin.ticm.dao.DaoException;
 import com.joyin.ticm.ka.sl.${className}KeepAccount;
@@ -23,7 +25,7 @@ import com.joyin.ticm.workflow.service.FlowProcessService;
 
 
 /**
- * @Description ${table.comment!}业务操作层实现类
+ * ${table.comment!}业务操作层实现类
  */
 @Service("${className?uncap_first}Service")
 public class ${className}ServiceImpl extends ServiceBase implements ${className}Service {
@@ -39,7 +41,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	private KeepAccountService keepAccountService;
 
 	/**
-	 * @Description 保存${table.comment!}
+	 * 保存${table.comment!}
 	 * @param ${className?uncap_first}
 	 *            ${table.comment!}
 	 * @param isSubmit
@@ -50,17 +52,17 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	@Override
 	public ResultData saveAndSubmit(${className} ${className?uncap_first}, boolean isSubmit)
 			throws ServiceException {
-		String methodName = "saveOrSubmit";
+		String methodName = "saveAndSubmit";
 		info(methodName, "param[${className?uncap_first}]: " + ${className?uncap_first} + " param[isSubmit]: "
 				+ isSubmit);
 
 		ResultData rst = new ResultData();
-		if (CommonUtil.isEmpty(${className?uncap_first}.getSeqid())) {
-			String seqid = this.getBusinessId(Constant.BusinessIdType.SL_DUE,
-					${className?uncap_first}.getSlDeal().getOrgid());
-			${className?uncap_first}.setSeqid(seqid);
+		if (CommonUtil.isEmpty(${className?uncap_first}.getReqid())) {
+			String reqid = this.getBusinessId(Constant.BusinessIdType.SL_DUE,
+					${className?uncap_first}.getOrgid());
+			${className?uncap_first}.setReqid(reqid);
 		}
-		${className?uncap_first}.setLinkid(${className?uncap_first}.getSeqid());
+		${className?uncap_first}.setLinkid(${className?uncap_first}.getReqid());
 
 		// 流程返回结果
 		ResultData rstFlow = new ResultData();
@@ -98,7 +100,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	
 
 	/**
-	 * @Description 更新${table.comment!}
+	 * 更新${table.comment!}
 	 * @param ${className?uncap_first}
 	 *            ${table.comment!}
 	 * @param isSubmit
@@ -108,7 +110,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	 */
 	public ResultData updateAndSubmit(${className} ${className?uncap_first}, boolean isSubmit)
 			throws ServiceException {
-		String methodName = "updateOrSubmit";
+		String methodName = "updateAndSubmit";
 		info(methodName, "param[${className?uncap_first}]: " + ${className?uncap_first} + " param[isSubmit]: "
 				+ isSubmit);
 
@@ -120,19 +122,9 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			if (isSubmit) {
 				// 提交流程
 				rstFlow = flowProcessService.complateTask(null, ${className?uncap_first});
-				if (rstFlow.isSuccess() == false) {
-					return rstFlow;
-				}
-				if (CommonUtil.isNotEmpty(rstFlow.getMap())) {
-					String processid = rstFlow.getMap().get(FlowDoType.PROCESSID).toString();
-					${className?uncap_first}.setJbpmProcessid(processid);
-				}
 			}else {
 				// 更新流程名称
 				rstFlow = flowProcessService.updateFlowStateName(${className?uncap_first});
-				if (rstFlow.isSuccess() == false) {
-					return rstFlow;
-				}
 			}
 			// 流程执行后状态
 			int flowRstStatus = FlowStateType.NOT_OVER;
@@ -165,7 +157,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	 * @Description 查询${table.comment!}信息
+	 * 查询${table.comment!}信息
 	 * @param ${className?uncap_first}
 	 * @param pager
 	 *            分页信息
@@ -178,11 +170,11 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	 */
 	@Override
 	public ResultData find${className}OfPage(${className} ${className?uncap_first}, Pager pager, String optype,
-			List<String> ${className?uncap_first}Seqids) throws ServiceException {
+			List<String> ${className?uncap_first}Reqids) throws ServiceException {
 		String methodName = "find${className}OfPage ";
 		info(methodName, "查询${table.comment!}信息" + ",params[${className?uncap_first}]=" + ${className?uncap_first} + ",[pager]="
-				+ pager + ",[optype]=" + optype + ",[slDealReqids]="
-				+ ${className?uncap_first}Seqids);
+				+ pager + ",[optype]=" + optype + ",[${className?uncap_first}Reqids]="
+				+ ${className?uncap_first}Reqids);
 		ResultData rs = new ResultData();
 		if (CommonUtil.isEmpty(pager)) {
 			rs.setSuccess(false);
@@ -195,7 +187,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			return rs;
 		}
 		try {
-			rs = ${className?uncap_first}Dao.find${className}OfPage(${className?uncap_first}, pager, optype, ${className?uncap_first}Seqids);
+			rs = ${className?uncap_first}Dao.find${className}OfPage(${className?uncap_first}, pager, optype, ${className?uncap_first}Reqids);
 		}
 		catch (DaoException e) {
 			throw processException(methodName, e.getMessage(), e);
@@ -204,23 +196,19 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	 * @Description 根据流水号查询债券借贷到期数据
-	 * @param seqid
+	 * 根据流水号查询债券借贷到期数据
+	 * @param reqid
 	 *            流水号
 	 * @return ${className} 到期交易
 	 * @throws ServiceException
 	 */
 	@Override
-	public ${className} findById(String seqid) throws ServiceException {
+	public ${className} findById(String reqid) throws ServiceException {
 		String methodName = "findById";
-		info(methodName, "param[reqid]: " + seqid);
+		info(methodName, "param[reqid]: " + reqid);
 
 		try {
-			${className} ${className?uncap_first} = new ${className}();
-			${className?uncap_first} = baseDao.findById(${className}.class, seqid);
-			SlDeal slDeal = baseDao.findById(SlDeal.class, ${className?uncap_first}.getSlDeal()
-					.getReqid());
-			${className?uncap_first}.setSlDeal(slDeal);
+			${className} ${className?uncap_first} = baseDao.findById(${className}.class, reqid);
 			return ${className?uncap_first};
 		}
 		catch (DaoException ex) {
@@ -230,7 +218,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	 * @Description 删除${table.comment!}
+	 * 删除${table.comment!}
 	 * @param ${className?uncap_first}List
 	 *            ${table.comment!}list
 	 * @return ResultData
@@ -274,7 +262,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	 * @Description 账务预览
+	 * 账务预览
 	 * @param ${className?uncap_first}
 	 *            ${table.comment!}
 	 * @param userInfo
@@ -312,7 +300,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	 * @Description ${table.comment!}复核退回
+	 * ${table.comment!}复核退回
 	 * @param ${className?uncap_first}
 	 *            到期交易
 	 * @throws ServiceException
@@ -342,7 +330,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	 * @Description ${table.comment!}记账处理
+	 * ${table.comment!}记账处理
 	 * @param ${className?uncap_first}
 	 *            到期交易
 	 * @param isView
@@ -384,7 +372,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	* @Description 回滚业务数据
+	* 回滚业务数据
 	* @param businessNo
 	* @return ResultData
 	* @throws ServiceException  

@@ -11,11 +11,11 @@ import com.joyin.ticm.sysmn.user.model.UserInfo;
 
 /**
 *
-* @Description  ${table.comment!}业务操作层接口
+*  ${table.comment!}业务操作层接口
 */
 public interface ${className}Service {
     /**
-    * @Description 保存${table.comment!}
+    * 保存${table.comment!}
     * @param ${className?uncap_first} ${table.comment!}
     * @param isSubmit 是否提交
     * @return ResultData
@@ -23,7 +23,7 @@ public interface ${className}Service {
     */
     public ResultData saveAndSubmit(${className} ${className?uncap_first}, boolean isSubmit)throws ServiceException;
     /**
-    * @Description 更新${table.comment!}
+    * 更新${table.comment!}
     * @param ${className?uncap_first} ${table.comment!}
     * @param isSubmit 是否提交
     * @return ResultData
@@ -31,7 +31,7 @@ public interface ${className}Service {
     */
     public ResultData updateAndSubmit(${className} ${className?uncap_first}, boolean isSubmit)throws ServiceException;
     /**
-    * @Description 查询${table.comment!}信息
+    * 查询${table.comment!}信息
     * @param ${className?uncap_first}
     * @param pager 分页信息
     * @param optype 操作类型
@@ -39,9 +39,9 @@ public interface ${className}Service {
     * @return ResultData
     * @throws ServiceException
     */
-    public ResultData find${className}OfPage(${className} ${className?uncap_first}, Pager pager,String optype, List<String> ${className?uncap_first}Seqids) throws ServiceException;
+    public ResultData find${className}OfPage(${className} ${className?uncap_first}, Pager pager,String optype, List<String> ${className?uncap_first}Reqids) throws ServiceException;
     /**
-    * @Description 根据流水号查询债券借贷到期数据
+    * 根据流水号查询债券借贷到期数据
     * @param seqid 流水号
     * @return ${className} 到期交易
     * @throws ServiceException
@@ -49,14 +49,14 @@ public interface ${className}Service {
     public ${className} findById(String seqid) throws ServiceException;
 
     /**
-    * @Description 删除${table.comment!}
+    * 删除${table.comment!}
     * @param ${className?uncap_first}List ${table.comment!}list
     * @return ResultData
     * @throws ServiceException
     */
     public ResultData delete${className}(List<${className}> ${className?uncap_first}List)throws ServiceException;
     /**
-    * @Description 账务预览
+    * 账务预览
     * @param ${className?uncap_first} ${table.comment!}
     * @param userInfo 当前登录用户信息
     * @return ResultData
@@ -64,13 +64,13 @@ public interface ${className}Service {
     */
     public ResultData saveAccountView(${className} ${className?uncap_first}, UserInfo userInfo)throws Exception;
     /**
-    * @Description ${table.comment!}复核退回
+    * ${table.comment!}复核退回
     * @param ${className?uncap_first} 到期交易
     * @throws ServiceException
     */
     public ResultData rejectFlow(${className} ${className?uncap_first}) throws ServiceException;
     /**
-    * @Description 回滚业务数据
+    * 回滚业务数据
     * @param businessNo
     * @return ResultData
     * @throws ServiceException

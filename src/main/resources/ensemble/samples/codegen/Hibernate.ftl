@@ -16,12 +16,12 @@
             <column name="${column.name?upper_case}" sql-type="timestamp" default="CURRENT_TIMESTAMP" />
         </property>
     <#elseif column.typeName == "BigDecimal">
-        <property name="${column.name}" type="${column.typeName}">
+        <property name="${column.name}" type="java.math.BigDecimal">
             <column name="${column.name?upper_case}" precision="${column.size}" scale="${column.digit}">
             </column>
         </property>
     <#else>
-        <property name="${column.name}" type="${column.typeName}">
+        <property name="${column.name}" type="${column.typeName?uncap_first}">
             <column name="${column.name?upper_case}" length="${column.size}">
             </column>
         </property>

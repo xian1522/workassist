@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
 
 import com.joyin.ticm.accmn.kamn.model.SysKeepAccount;
@@ -15,13 +16,14 @@ import com.joyin.ticm.accmn.kamn.model.SysKeepAccountDetail;
 import com.joyin.ticm.base.Entity;
 import com.joyin.ticm.bean.ResultData;
 import com.joyin.ticm.common.constant.Constant;
+import com.joyin.ticm.common.constant.Constant.FlowStateType;
+import com.joyin.ticm.common.constant.Constant.RESPOND;
 import com.joyin.ticm.common.util.CommonUtil;
 import com.joyin.ticm.common.util.MessageUtil;
 import com.joyin.ticm.dao.DaoException;
 import com.joyin.ticm.page.Pager;
 import com.joyin.ticm.service.ServiceException;
 
-import com.joyin.ticm${packageName}.dto.${className}Dto;
 import com.joyin.ticm${packageName}.model.${className};
 import com.joyin.ticm${packageName}.service.${className}Service;
 
@@ -191,14 +193,14 @@ public class ${className}Action extends ActionBase {
                 // 更新并提交
                 rstBiz = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, true);
                 // 记录日志
-                writeOpLog(${className?uncap_first}.getSeqid(), ${className?uncap_first}.getOwnedModuleid(),
+                writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),
                 Constant.OperateType.STRING_UPDATEANDSUBMIT);
             } else {
                 ${className?uncap_first}.setEffectflag(Constant.EffectFlag.A);
                 // 保存并提交
                 rstBiz = ${className?uncap_first}Service.saveAndSubmit(${className?uncap_first}, true);
                 // 记录日志
-                writeOpLog(${className?uncap_first}.getSeqid(), ${className?uncap_first}.getOwnedModuleid(),
+                writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),
                 Constant.OperateType.STRING_SUBMIT);
             }
 
@@ -230,14 +232,14 @@ public class ${className}Action extends ActionBase {
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, e.getMessage());
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getSeqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
             Constant.OperateType.STRING_SUBMIT, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
             // 返回错误结果
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, MessageUtil
             .getMessage(MessageUtil.Message.OP_LOG_0002));
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getSeqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
             Constant.OperateType.STRING_SUBMIT, e.getMessage(), e);
         }
         return methodName;
@@ -278,7 +280,7 @@ public class ${className}Action extends ActionBase {
 
             }
         } catch (Exception e) {
-            processExceptionIntoDB(methodName,${className?uncap_first}.getSeqid(),Constant.OperateType.STRING_KEEPACCOUNT,e.getMessage(), e);
+            processExceptionIntoDB(methodName,${className?uncap_first}.getReqid(),Constant.OperateType.STRING_KEEPACCOUNT,e.getMessage(), e);
             results.put(RESPOND.RESULT, false);
             results.put(RESPOND.MESSAGE, e.getMessage());
         }
@@ -287,7 +289,7 @@ public class ${className}Action extends ActionBase {
 
 
     /**
-    * @Description ${table.comment!}流程操作页面跳转
+    * ${table.comment!}流程操作页面跳转
     */
     public String ${className?uncap_first}FlowTask() {
         String methodName = "${className?uncap_first}FlowTask";
@@ -315,12 +317,12 @@ public class ${className}Action extends ActionBase {
         } catch (ServiceException e) {
             flowState.setField1(ERROR);
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getSeqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
             Constant.OperateType.STRING_FLOW_FORWARD, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
             flowState.setField1(ERROR);
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getSeqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
             Constant.OperateType.STRING_REJECT, e.getMessage(), e);
         }
         return url;
@@ -343,7 +345,7 @@ public class ${className}Action extends ActionBase {
             // 退回
             rstBiz = ${className?uncap_first}Service.rejectFlow(${className?uncap_first});
             // 记录日志
-            writeOpLog(${className?uncap_first}.getSeqid(), ${className?uncap_first}.getOwnedModuleid(),Constant.OperateType.STRING_REJECT);
+            writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),Constant.OperateType.STRING_REJECT);
             if (rstBiz.isSuccess()) {
                 // 返回前台结果集
                 results.put(Constant.RESPOND.RESULT, true);
@@ -358,7 +360,7 @@ public class ${className}Action extends ActionBase {
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, e.getMessage());
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getSeqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
             Constant.OperateType.STRING_REJECT, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
             // 返回前台结果集
@@ -366,7 +368,7 @@ public class ${className}Action extends ActionBase {
             results.put(Constant.RESPOND.MESSAGE, MessageUtil
             .getMessage(MessageUtil.Message.OP_LOG_0002));
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getSeqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
             Constant.OperateType.STRING_REJECT, e.getMessage(), e);
         }
         return methodName;
@@ -392,8 +394,6 @@ public class ${className}Action extends ActionBase {
         ResultData flowResultData = new ResultData();
         Map<String, Object> flowMap = new HashMap<String, Object>();
         List<${className}Dto> dtoList = new ArrayList<${className}Dto>();
-        // 获取参数字典
-        Map<String, String> dict = Utils.getDataDictMap();
 
         String opt = Constant.OperateType.STRING_VIEW_LIST;
         try {
@@ -404,7 +404,7 @@ public class ${className}Action extends ActionBase {
                 }
             } else {
                 rs = ${className?uncap_first}Service.find${className}OfPage(${className?uncap_first}, pager, optype, null);
-                flowResultData = getFlowStateByLinkIds(rs.getList(), "seqid");
+                flowResultData = getFlowStateByLinkIds(rs.getList(), "reqid");
             }
             ${className?uncap_first}List = (List<${className}>) rs.getList();
             flowMap = CommonUtil.isNotEmpty(flowResultData)&& flowResultData.isSuccess() ? (Map<String, Object>) flowResultData.getMap() : new HashMap<String, Object>();
@@ -414,7 +414,7 @@ public class ${className}Action extends ActionBase {
                     ${className}Dto dto = new ${className}Dto();
                     BeanUtils.copyProperties(${className?uncap_first}Temp, dto);
                     // 流程信息赋值
-                    transferFlowInfo(dto, flowMap, "seqid");
+                    transferFlowInfo(dto, flowMap, "reqid");
                     dtoList.add(dto);
                 }
             }
@@ -472,7 +472,7 @@ public class ${className}Action extends ActionBase {
     }
 
     /**
-    * @Description 格式化页面展示信息
+    * 格式化页面展示信息
     */
     private void format${className}ForPage(${className} ${className?uncap_first}){
                                 

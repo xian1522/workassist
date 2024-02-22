@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 
@@ -22,7 +21,7 @@ import com.joyin.ticm${packageName}.model.${className};
 
 
 /**
- * @Description ${table.comment!}数据库操作层实现 
+ * ${table.comment!}数据库操作层实现 
  */
 public class ${className}DaoImpl extends AbstractDao implements ${className}Dao {
 	
@@ -30,7 +29,7 @@ public class ${className}DaoImpl extends AbstractDao implements ${className}Dao 
 	private BaseDao baseDao;
 	
 	/**
-	* @Description 查询${table.comment!}
+	* 查询${table.comment!}
 	* @param ${className?uncap_first} 查询条件
 	* @param pager 分布信息
 	* @param optype 操作类型
@@ -40,9 +39,9 @@ public class ${className}DaoImpl extends AbstractDao implements ${className}Dao 
 	 */
 	@Override
 	public ResultData find${className}OfPage(${className} ${className?uncap_first}, Pager pager, String optype,
-			List<String> ${className?uncap_first}Seqids) throws DaoException {
+			List<String> ${className?uncap_first}Reqids) throws DaoException {
 		String methodName = "find${className}OfPage";
-		info(methodName, "params: "+ ${className?uncap_first} +" - "+ pager + " - " +optype+ " - "+${className?uncap_first}Seqids);
+		info(methodName, "params: "+ ${className?uncap_first} +" - "+ pager + " - " +optype+ " - "+${className?uncap_first}Reqids);
         try {
             String hql = "from ${className} ${className?uncap_first} where 1 = 1 ";
             String strWhere = "";
@@ -60,7 +59,7 @@ public class ${className}DaoImpl extends AbstractDao implements ${className}Dao 
             }
             //查询需要办理的数据
             if (Constant.OptionType.DEAL.equals(optype)) {
-                hql+=" AND ${className?uncap_first}.seqid IN (" + CommonUtil.listToSqlStr(${className?uncap_first}Seqids)
+                hql+=" AND ${className?uncap_first}.seqid IN (" + CommonUtil.listToSqlStr(${className?uncap_first}Reqids)
                         + ")";
             }
             
