@@ -9,6 +9,10 @@ import cn.hutool.db.meta.Column;
 import cn.hutool.db.meta.MetaUtil;
 import cn.hutool.db.meta.Table;
 import cn.hutool.db.sql.SqlExecutor;
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -27,6 +31,12 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class CodeGenController {
+
+//    public static void main(String[] args) {
+//        DataSource ds = DSFactory.get();
+//        Table table = MetaUtil.getTableMeta(ds, "SL_DEAL");
+//        System.out.println(table.getPkNames().stream().findFirst().get());
+//    }
 
     @FXML
     private TextField tablename;
@@ -57,6 +67,10 @@ public class CodeGenController {
                     generateFilePath += ".hbm.xml";
                 }else if("Config.ftl".equals(templateName)){
                     generateFilePath += ".xml";
+                }else if("ManagerJs.ftl".equals(templateName)){
+                    generateFilePath += "Manager.js";
+                }else if("ManagerJsp.ftl".equals(templateName)){
+                    generateFilePath += "Manager.jsp";
                 }else {
                     generateFilePath += templateName.replace("ftl","java");
                 }
@@ -87,7 +101,13 @@ public class CodeGenController {
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_22);
 
         try {
-            configuration.setDirectoryForTemplateLoading(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen"));
+
+            FileTemplateLoader ftl1 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/backward"));
+            FileTemplateLoader ftl2 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/front"));
+            TemplateLoader[] loaders = new TemplateLoader[] { ftl1, ftl2 };
+            MultiTemplateLoader mtl = new MultiTemplateLoader(loaders);
+            configuration.setTemplateLoader(mtl);
+//            configuration.setDirectoryForTemplateLoading(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen"));
             configuration.setDefaultEncoding("UTF-8");
             configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
@@ -99,6 +119,7 @@ public class CodeGenController {
             Template modelTemplate = configuration.getTemplate("Model.ftl");
             Template hibenateTemplate = configuration.getTemplate("Hibernate.ftl");
             Template configTemplate = configuration.getTemplate("Config.ftl");
+            Template jspTemplate = configuration.getTemplate("ManagerJs.ftl");
 
             templateList.add(actionTemplate);
             templateList.add(serviceTemplate);
@@ -108,6 +129,9 @@ public class CodeGenController {
             templateList.add(modelTemplate);
             templateList.add(hibenateTemplate);
             templateList.add(configTemplate);
+            templateList.add(jspTemplate);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -163,6 +187,7 @@ public class CodeGenController {
         root.put("className", className);
         root.put("packageName", packageName);
         root.put("importList", importList);
+        root.put("pkname",table.getPkNames().stream().findFirst().get());
 
         return root;
     }

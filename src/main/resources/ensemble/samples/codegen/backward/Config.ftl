@@ -53,3 +53,5 @@ INSERT INTO SYS_FLOW_TASK (MODULEID, FLOW_KEY, TASK_NAME, GROUPID, ORGPERMIT, DE
 VALUES('2101', '${className}Flow', '经办', 1, NULL, '${packageName?replace(".","/")?substring(1)}/${className?uncap_first}FlowTask', 1, sysdate, 'gqliu', 'E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO SYS_FLOW_TASK (MODULEID, FLOW_KEY, TASK_NAME, GROUPID, ORGPERMIT, DETAILURL, TASK_ORDER, LSTMNTDATE, LSTMNTUSER, EFFECTFLAG, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, OPORGKEY, OPTTYPE, SERVICENAME)
 VALUES('2101', '${className}Flow', '复核', 1, NULL, '${packageName?replace(".","/")?substring(1)}/${className?uncap_first}FlowTask', 2, sysdate, 'gqliu', 'E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+
