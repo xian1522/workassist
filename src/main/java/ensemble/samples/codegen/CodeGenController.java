@@ -18,6 +18,8 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,12 +42,19 @@ public class CodeGenController {
 
     @FXML
     private TextField tablename;
+    @FXML
+    private ComboBox isKeepAccount; //是否记账
+    @FXML
+    private ComboBox isSafeFlow; //是否维护流程
 
     @FXML
     public void generateCode() {
 
         String tablename = this.tablename.getText();
         if(tablename == null || tablename.trim().length() == 0) {
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setContentText("表名不能为空!");
+            warning.showAndWait();
             return;
         }
         Map root = processDataBaseMeta(tablename);
@@ -83,15 +92,16 @@ public class CodeGenController {
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);//缓冲
                 String s = "";
                 bufferedWriter.write(s);
-
-                System.out.println("------------"+ template.getName() +" generation success--------------");
-
                 bufferedWriter.flush();
                 bufferedWriter.close();
             }
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
         }
+
+        Alert success = new Alert(Alert.AlertType.INFORMATION);
+        success.setContentText("模板数据生成成功");
+        success.show();
     }
 
     public static List<Template> processTemplate() {
@@ -139,7 +149,7 @@ public class CodeGenController {
         return templateList;
     }
 
-    public static Map processDataBaseMeta(String tableName) {
+    public Map processDataBaseMeta(String tableName) {
 
         Map root = new HashMap();
 
@@ -189,7 +199,17 @@ public class CodeGenController {
         root.put("importList", importList);
         root.put("pkname",table.getPkNames().stream().findFirst().get());
 
+        root.put("isKeepAccount", isKeepAccount.getValue());
+        root.put("isSafeFlow", isSafeFlow.getValue());
+
         return root;
     }
 
+    public ComboBox getIsKeepAccount() {
+        return isKeepAccount;
+    }
+
+    public ComboBox getIsSafeFlow() {
+        return isSafeFlow;
+    }
 }

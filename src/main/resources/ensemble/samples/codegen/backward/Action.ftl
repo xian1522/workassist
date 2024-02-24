@@ -478,6 +478,10 @@ public class ${className}Action extends ActionBase {
                                 
     }
 
+    private void format${className}ForSave(${className} ${className?uncap_first}){
+
+    }
+
 
     public Map<String, Object> getResults() {
         return results;

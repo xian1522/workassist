@@ -13,21 +13,26 @@
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label prefHeight="15.0" prefWidth="135.0" text="TABLENAME:" GridPane.halignment="RIGHT" GridPane.valignment="CENTER" />
-            <Label prefHeight="15.0" prefWidth="135.0" text="PACKAGEPATH:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="15.0" prefWidth="135.0" text="主表:" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
+            <Label alignment="CENTER_RIGHT" prefHeight="15.0" prefWidth="135.0" text="文件生成路径:" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
             <TextField fx:id="tablename" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets right="120.0" />
                </GridPane.margin></TextField>
-            <TextField fx:id="packagepath" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="packagepath" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets right="120.0" />
                </GridPane.margin></TextField>
-            <HBox prefHeight="32.0" prefWidth="373.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <HBox prefHeight="32.0" prefWidth="373.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                <children>
                   <Button mnemonicParsing="false" onAction="#generateCode" text="submit">
                      <HBox.margin>
@@ -41,6 +46,16 @@
                   </Button>
                </children>
             </HBox>
+            <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="子表:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+            <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否记账:" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+            <ComboBox fx:id="isKeepAccount" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="subTableName" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets right="120.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否维护流程:" GridPane.rowIndex="3" />
+            <ComboBox fx:id="isSafeFlow" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </children>

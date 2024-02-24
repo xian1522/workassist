@@ -24,11 +24,20 @@ public class CodegenApp extends Application {
         fxmlLoader.setLocation(this.getClass().getResource("codegen.fxml"));
         try {
             AnchorPane anchorPane = fxmlLoader.load();
+            CodeGenController controller = fxmlLoader.getController();
+
+            initComboBox(controller);
+
             return anchorPane;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void initComboBox(CodeGenController controller) {
+        controller.getIsKeepAccount().getItems().addAll("是","否");
+        controller.getIsSafeFlow().getItems().addAll("是","否");
     }
 
     public static void main(String[] args) {

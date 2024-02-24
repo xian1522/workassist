@@ -49,7 +49,7 @@ function init${className}Grid(){
     var columns = [
         {display: '状态', name: 'stateName', align: 'left', width: 180,frozen: "true"},
 <#list table.columns as column>
-    { dispaly: '${column.comment!}', name: '${column.name}', align: 'left', <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
+    { dispaly: '${column.comment!}', name: '${column.name}', align: <#if column.typeName='Date' || column.typeName='BigDecimal'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
 </#list>
     ];
     columns = columns.concat(gridHide);
