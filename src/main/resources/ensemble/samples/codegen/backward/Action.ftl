@@ -54,7 +54,7 @@ public class ${className}Action extends ActionBase {
 
     public String init${className}Manager() {
         String methodName = "init${className}Manager";
-        info(methodName, "初始化管理页面");
+        info(methodName, "初始化${table.comment!}管理页面");
         // 机构类型
         ${className?uncap_first}.setLoginOrgtype(user.getOrgtype());
         // 登录机构号
@@ -69,7 +69,7 @@ public class ${className}Action extends ActionBase {
 
     public String init${className}Add() {
         String methodName = "init${className}Add";
-        info(methodName, "初始化新增页面");
+        info(methodName, "初始化${table.comment!}新增页面");
 
         ${className?uncap_first}.setRtranuser(user.getUser().getUserid());
         ${className?uncap_first}.setRtranname(user.getUser().getUsername());
@@ -81,7 +81,7 @@ public class ${className}Action extends ActionBase {
 
     public String init${className}Edit() {
         String methodName = "init${className}Edit";
-        info(methodName, "初始化编辑页面.");
+        info(methodName, "初始化${table.comment!}编辑页面.");
         flowState = new FlowState();
         try {
             String taskId = ${className?uncap_first}.getTaskId();
@@ -104,7 +104,7 @@ public class ${className}Action extends ActionBase {
 
     public String init${className}View() {
         String methodName = "init${className}View";
-        info(methodName, "初始化查看页面");
+        info(methodName, "初始化${table.comment!}查看页面");
         try {
             ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.getReqid());
             format${className}ForPage(${className?uncap_first});
@@ -118,7 +118,7 @@ public class ${className}Action extends ActionBase {
 
     public String save${className}() {
         String methodName = "save${className}";
-        info(methodName, "保存交易信息");
+        info(methodName, "保存${table.comment!}");
         UserInfo user = this.getSessionUserInfo();
         // 当前登录用户机构号
         ${className?uncap_first}.setLoginOrgid(user.getUser().getOrgid());
@@ -256,7 +256,7 @@ public class ${className}Action extends ActionBase {
 <#if isKeepAccount == "是">
     public String saveAccountView(){
         String methodName = "saveAccountView";
-        info(methodName, "债券借贷交易账务预览");
+        info(methodName, "${table.comment!}账务预览");
 
         UserInfo user = this.getSessionUserInfo();
         try {
