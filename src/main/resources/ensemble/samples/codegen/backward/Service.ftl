@@ -56,6 +56,13 @@ public interface ${className}Service {
     */
     public ResultData delete${className}(List<${className}> ${className?uncap_first}List)throws ServiceException;
     /**
+    * ${table.comment!}复核退回
+    * @param ${className?uncap_first} 到期交易
+    * @throws ServiceException
+    */
+    public ResultData rejectFlow(${className} ${className?uncap_first}) throws ServiceException;
+<#if isKeepAccount == "是">
+    /**
     * 账务预览
     * @param ${className?uncap_first} ${table.comment!}
     * @param userInfo 当前登录用户信息
@@ -64,16 +71,11 @@ public interface ${className}Service {
     */
     public ResultData saveAccountView(${className} ${className?uncap_first}, UserInfo userInfo)throws Exception;
     /**
-    * ${table.comment!}复核退回
-    * @param ${className?uncap_first} 到期交易
-    * @throws ServiceException
-    */
-    public ResultData rejectFlow(${className} ${className?uncap_first}) throws ServiceException;
-    /**
     * 回滚业务数据
     * @param businessNo
     * @return ResultData
     * @throws ServiceException
     */
     public ResultData rubAccountByBusinessNo(String businessNo) throws ServiceException;
+</#if>
 }

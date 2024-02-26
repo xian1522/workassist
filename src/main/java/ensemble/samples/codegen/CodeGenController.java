@@ -33,13 +33,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class CodeGenController {
-
-//    public static void main(String[] args) {
-//        DataSource ds = DSFactory.get();
-//        Table table = MetaUtil.getTableMeta(ds, "SL_DEAL");
-//        System.out.println(table.getPkNames().stream().findFirst().get());
-//    }
-
     @FXML
     private TextField tablename;
     @FXML
@@ -80,6 +73,8 @@ public class CodeGenController {
                     generateFilePath += "Manager.js";
                 }else if("ManagerJsp.ftl".equals(templateName)){
                     generateFilePath += "Manager.jsp";
+                }else if("BaseInfo.ftl".equals(templateName)){
+                    generateFilePath += "BaseInfo.html";
                 }else {
                     generateFilePath += templateName.replace("ftl","java");
                 }
@@ -104,7 +99,7 @@ public class CodeGenController {
         success.show();
     }
 
-    public static List<Template> processTemplate() {
+    public List<Template> processTemplate() {
 
         List<Template> templateList = new ArrayList<>();
 
@@ -129,7 +124,11 @@ public class CodeGenController {
             Template modelTemplate = configuration.getTemplate("Model.ftl");
             Template hibenateTemplate = configuration.getTemplate("Hibernate.ftl");
             Template configTemplate = configuration.getTemplate("Config.ftl");
-            Template jspTemplate = configuration.getTemplate("ManagerJs.ftl");
+            Template keepAccountTemplate = configuration.getTemplate("KeepAccount.ftl");
+
+            Template jsTemplate = configuration.getTemplate("ManagerJs.ftl");
+            Template jspTemplate = configuration.getTemplate("ManagerJsp.ftl");
+            Template baseInfoTemplate = configuration.getTemplate("BaseInfo.ftl");
 
             templateList.add(actionTemplate);
             templateList.add(serviceTemplate);
@@ -139,9 +138,13 @@ public class CodeGenController {
             templateList.add(modelTemplate);
             templateList.add(hibenateTemplate);
             templateList.add(configTemplate);
+            if(isKeepAccount.getValue().equals("是")) {
+                templateList.add(keepAccountTemplate);
+            }
+
             templateList.add(jspTemplate);
-
-
+            templateList.add(jsTemplate);
+            templateList.add(baseInfoTemplate);
 
         } catch (IOException e) {
             e.printStackTrace();

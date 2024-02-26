@@ -203,7 +203,7 @@ public class ${className}Action extends ActionBase {
                 writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),
                 Constant.OperateType.STRING_SUBMIT);
             }
-
+<#if isKeepAccount == "是">
             if (FlowStateType.FLOW_OVER == rstBiz.getTaskOrder()) {
                 rst = printVouch((List<SysKeepAccount>) rstBiz.getList());
                 if (rst.isSuccess()) {
@@ -226,7 +226,15 @@ public class ${className}Action extends ActionBase {
                     results.put(Constant.RESPOND.MESSAGE,MessageUtil.getMessage(MessageUtil.Message.TICM_MESSAGE_SUBMIT_ERROR));
                 }
             }
-
+<#else >
+        if (rstBiz.isSuccess()) {
+            results.put(Constant.RESPOND.RESULT, true);
+            results.put(Constant.RESPOND.MESSAGE,MessageUtil.getMessage(MessageUtil.Message.TICM_MESSAGE_SUBMIT_SUCCESS));
+        } else {
+            results.put(Constant.RESPOND.RESULT, false);
+            results.put(Constant.RESPOND.MESSAGE,MessageUtil.getMessage(MessageUtil.Message.TICM_MESSAGE_SUBMIT_ERROR));
+        }
+</#if>
         } catch (ServiceException e) {
             // 返回错误结果
             results.put(Constant.RESPOND.RESULT, false);
@@ -245,7 +253,7 @@ public class ${className}Action extends ActionBase {
         return methodName;
     }
 
-
+<#if isKeepAccount == "是">
     public String saveAccountView(){
         String methodName = "saveAccountView";
         info(methodName, "债券借贷交易账务预览");
@@ -286,7 +294,7 @@ public class ${className}Action extends ActionBase {
         }
         return methodName;
     }
-
+</#if>
 
     /**
     * ${table.comment!}流程操作页面跳转

@@ -134,8 +134,11 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			}
 			// 流程结束
 			if (flowRstStatus == FlowStateType.FLOW_OVER) {
+				${className?uncap_first}.setEffectflag(Constant.EffectFlag.E);
+<#if isKeepAccount == "是">
 				// 记账
 				rst = keepAccount(${className?uncap_first}, KaConstant.VIEW.NOT_VIEW);
+</#if>
 				rst.setTaskOrder(FlowStateType.FLOW_OVER);
 			}
 			// 更新业务信息
@@ -260,7 +263,36 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 
 		return rtData;
 	}
+	/**
+	* ${table.comment!}复核退回
+	* @param ${className?uncap_first}
+	*            到期交易
+	* @throws ServiceException
+	*/
+	@Override
+	public ResultData rejectFlow(${className} ${className?uncap_first}) throws ServiceException {
+		String methodName = "rejectFlow";
+		info(methodName, "param[${className?uncap_first}]: " + ${className?uncap_first});
 
+		// 定义返回信息
+		ResultData rtData = new ResultData();
+		// 更新数据
+		try {
+			// 流程退回
+			ResultData rstFlow = flowProcessService.reject(${className?uncap_first});
+		if (rstFlow.isSuccess() == false) {
+			return rstFlow;
+		}
+		baseDao.saveOrUpdate(${className?uncap_first});
+			// 成功
+			rtData.setSuccess(true);
+		}
+		catch (Exception ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}
+		return rtData;
+	}
+<#if isKeepAccount == "是">
 	/**
 	 * 账务预览
 	 * @param ${className?uncap_first}
@@ -298,37 +330,6 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}
 		return rsData;
 	}
-
-	/**
-	 * ${table.comment!}复核退回
-	 * @param ${className?uncap_first}
-	 *            到期交易
-	 * @throws ServiceException
-	 */
-	@Override
-	public ResultData rejectFlow(${className} ${className?uncap_first}) throws ServiceException {
-		String methodName = "rejectFlow";
-		info(methodName, "param[${className?uncap_first}]: " + ${className?uncap_first});
-
-		// 定义返回信息
-		ResultData rtData = new ResultData();
-		// 更新数据
-		try {
-			// 流程退回
-			ResultData rstFlow = flowProcessService.reject(${className?uncap_first});
-			if (rstFlow.isSuccess() == false) {
-				return rstFlow;
-			}
-			baseDao.saveOrUpdate(${className?uncap_first});
-			// 成功
-			rtData.setSuccess(true);
-		}
-		catch (Exception ex) {
-			throw processException(methodName, ex.getMessage(), ex);
-		}
-		return rtData;
-	}
-
 	/**
 	 * ${table.comment!}记账处理
 	 * @param ${className?uncap_first}
@@ -370,7 +371,6 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}
 
 	}
-
 	/**
 	* 回滚业务数据
 	* @param businessNo
@@ -400,4 +400,5 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}
         return rd;
     }
+</#if>
 }
