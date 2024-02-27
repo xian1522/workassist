@@ -50,7 +50,15 @@ function init${className}Grid(){
         {display: '状态', name: 'stateName', align: 'left', width: 180,frozen: "true"},
 <#list table.columns as column>
     <#if column.comment??>
-    { display: '${column.comment!}', name: '${column.name}', align: <#if column.typeName='Date' || column.typeName='BigDecimal'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
+    { display: '${column.comment!}', name: '${column.name}', align: <#if column.typeName='Date' || column.typeName='BigDecimal'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120
+            <#if column.typeName='BigDecimal'>
+                ,render: function (rowdata, rowindex, value, column){
+                    if( value != null){
+                        return formatRound(value,<#if column.size==26>2<#elseif column.size==18>4</#if>);
+                    }
+                }}
+            </#if>
+        },
     </#if>
 </#list>
     ];
@@ -148,7 +156,7 @@ function edit${className}(){
         return;
     }
   	openCustomWindow(
-		contextPath +'${packageName?replace(".","/")}/init${className}Edit.do?moduleid=' + moduleid + '&${packageName?replace(".","/")}.${pkname}=' + rows[0].${pkname}
+		contextPath +'${packageName?replace(".","/")}/init${className}Edit.do?moduleid=' + moduleid + '&${className?uncap_first}.${pkname?lower_case}=' + rows[0].${pkname?lower_case}
 			+ '&${packageName?replace(".","/")}.taskId=' + rows[0].taskId,
 		Resource.moduleName+Constant.line+Constant.edit, 800, 580);
 }
@@ -202,7 +210,7 @@ function getSelectId(${className?uncap_first}grid){
     var selectedRowsLength = selectedRows.length;
     var ids = "";
     for (var i = 0; i < selectedRowsLength; i++) {
-        ids += selectedRows[i].${pkname} + "#" + selectedRows[i].taskId + ",";
+        ids += selectedRows[i].${pkname?lower_case} + "#" + selectedRows[i].taskId + ",";
     }
     return {
         "ids": ids

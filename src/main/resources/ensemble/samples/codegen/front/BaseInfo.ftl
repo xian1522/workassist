@@ -18,7 +18,10 @@
 						   value="<s:property value="${className?uncap_first}.${column.name}"/>" class="money input_w180_right validate[custom[illegalLetter]]" />
 				<#elseif  column.size == 18>
 					<input type="text" id="${column.name}" name="${className?uncap_first}.${column.name}"
-					       value="<s:property value="${className?uncap_first}.${column.name}"/>" class="input_w180_right validate[required,custom[moneyRate_2_4]]" onblur="replenish(this,4)"  />
+					<s:if test="${className?uncap_first}.${column.name} != null && '' != ${className?uncap_first}.${column.name}">
+						value='<s:text name="rate.format4"><s:param value="${className?uncap_first}.${column.name}"></s:param></s:text>'
+					</s:if>
+					class="input_w180_right validate[required,custom[moneyRate_2_4]]" onblur="replenish(this,4)"  />
 				</#if>
 			<#else>
 				<input type="text" id="${column.name}" name="${className?uncap_first}.${column.name}" value="<s:property value='${className?uncap_first}.${column.name}' />"  class="input_w180"/>
