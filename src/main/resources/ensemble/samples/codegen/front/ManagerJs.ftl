@@ -97,7 +97,15 @@ function init${className}Grid(){
                 iconClass: Constant.icon_viewflow
             }, {
                 line: true
+<#if isSafeFlow == "是">
+            },{
+                text: Constant.safe,
+                click: safe${className},
+                iconClass: Constant.icon_safe
             }, {
+                line: true
+</#if>
+            },{
                 text: Constant.deal,
                 click: function(){
                     onDeal(${className}grid);
@@ -122,7 +130,7 @@ $.quiDefaults.Grid.formatters['date'] = function(value, column){
 //新增
 function add${className}(){
   	openCustomWindow(
-		contextPath +'${packageName?replace(".","/")}/add${className}.do?moduleid=' + moduleid,
+		contextPath +'${packageName?replace(".","/")}/init${className}Add.do?moduleid=' + moduleid,
 		Resource.moduleName+Constant.line+Constant.add, 800, 620);
 }
 
@@ -140,7 +148,7 @@ function edit${className}(){
         return;
     }
   	openCustomWindow(
-		contextPath +'${packageName?replace(".","/")}/edit${className}.do?moduleid=' + moduleid + '&${packageName?replace(".","/")}.${pkname}=' + rows[0].${pkname}
+		contextPath +'${packageName?replace(".","/")}/init${className}Edit.do?moduleid=' + moduleid + '&${packageName?replace(".","/")}.${pkname}=' + rows[0].${pkname}
 			+ '&${packageName?replace(".","/")}.taskId=' + rows[0].taskId,
 		Resource.moduleName+Constant.line+Constant.edit, 800, 580);
 }
@@ -164,6 +172,30 @@ function delete${className}(){
         }, "json");
     });
 }
+<#if isSafeFlow == "是">
+//维护
+function safe${className}(){
+    var rows = grid.getSelectedRows();
+    if (rows.length != 1) {
+        top.Dialog.alert(Constant.noselect);
+        return;
+    }
+    $.post(contextPath +"${packageName?replace(".","/")}/check${className}.do", {
+        "${className?uncap_first}.planid": rows[0].planid,
+        "${className?uncap_first}.orgid": rows[0].orgid,
+    }, function(data){
+        if (data.res) {
+            openCustomWindow(
+                contextPath +'${packageName?replace(".","/")}/safe${className}.do?moduleid=' + moduleid + '&${className?uncap_first}.seqid=' + rows[0].seqid
+                + '&${className?uncap_first}.taskId=' + rows[0].taskId,
+                Resource.moduleName+Constant.line+Constant.safe, 1000, 600);
+        }
+        else {
+            top.Dialog.alert(data.message);
+        }
+    }, "json");
+}
+</#if>
 
 function getSelectId(${className?uncap_first}grid){
     var selectedRows = ${className?uncap_first}grid.getSelectedRows();
