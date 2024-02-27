@@ -23,5 +23,5 @@ public interface ${className}Dao {
 	* @throws DaoException  
 	 */
 	public ResultData find${className}OfPage(${className} ${className?uncap_first}, Pager pager,
-			String optype, List<String> ${className?uncap_first}Seqids) throws DaoException;
+			String optype, List<String> ${className?uncap_first}Reqids) throws DaoException;
 }

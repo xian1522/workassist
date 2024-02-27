@@ -20,7 +20,13 @@
 				/pages${packageName?replace(".","/")}/${className?uncap_first}Edit.jsp
 			</result>
 		</action>
-		
+<#if isSafeFlow == "是">
+		<action name="safe${className}" class="${className?uncap_first}Action" method="safe${className}">
+			<result name="success">
+				/pages${packageName?replace(".","/")}/${className?uncap_first}SafeEdit.jsp
+			</result>
+		</action>
+</#if>
 		<action name="init${className}View" class="${className?uncap_first}Action" method="init${className}View">
 			<result name="success">
 				/pages${packageName?replace(".","/")}/${className?uncap_first}View.jsp

@@ -1,4 +1,4 @@
-var ${className}grid = null;
+var ${className?uncap_first}grid = null;
 function initComplete(){
     //流程状态
     getDataDict("#effectflag", Constant.EFFECTFLAG);
@@ -28,7 +28,7 @@ function initOrgan(){
     $("#suggestorgid").bind("listSelect", function(e, obj){
         var value = obj.relText.split("-")[0];
         if ("" != value && null != value) {
-            $("#suggestorgid>input:eq(0)").val(value).attr("name", "${className}.orgid");
+            $("#suggestorgid>input:eq(0)").val(value).attr("name", "${className?uncap_first}.orgid");
             $("#orgname").val(obj.relValue);
         }
     })
@@ -41,7 +41,7 @@ function initOrgan(){
     })
     
     //设置初始值
-    $("#suggestorgid>input:eq(0)").val(JOYIN.sysinfo.orgid).attr("name", "${className}.orgid");
+    $("#suggestorgid>input:eq(0)").val(JOYIN.sysinfo.orgid).attr("name", "${className?uncap_first}.orgid");
 }
 
 
@@ -49,13 +49,15 @@ function init${className}Grid(){
     var columns = [
         {display: '状态', name: 'stateName', align: 'left', width: 180,frozen: "true"},
 <#list table.columns as column>
-    { dispaly: '${column.comment!}', name: '${column.name}', align: <#if column.typeName='Date' || column.typeName='BigDecimal'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
+    <#if column.comment??>
+    { display: '${column.comment!}', name: '${column.name}', align: <#if column.typeName='Date' || column.typeName='BigDecimal'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
+    </#if>
 </#list>
     ];
     columns = columns.concat(gridHide);
-    ${className}grid = $("#dataBasic").quiGrid({
+    ${className?uncap_first}grid = $("#dataBasic").quiGrid({
         columns: columns,
-        url: contextPath +'${packageName?replace(".","/")}/find${className}OfPage().do',
+        url: contextPath +'${packageName?replace(".","/")}/find${className}OfPage.do',
         checkbox: true,
         params: [{
             name: "moduleid",
@@ -118,7 +120,7 @@ $.quiDefaults.Grid.formatters['date'] = function(value, column){
 }
 
 //新增
-function addAssetInfo(){
+function add${className}(){
   	openCustomWindow(
 		contextPath +'${packageName?replace(".","/")}/add${className}.do?moduleid=' + moduleid,
 		Resource.moduleName+Constant.line+Constant.add, 800, 620);
@@ -126,13 +128,13 @@ function addAssetInfo(){
 
 //查看流程
 function viewFlow(){
-    var rows = ${className}grid.getSelectedRows();
+    var rows = ${className?uncap_first}grid.getSelectedRows();
     onViewFlow(rows[0].jbpmProcessid, rows[0].ownedModulename);
 }
 
 //编辑    
-function editAssetInfo(){
-    var rows = ${className}grid.getSelectedRows();
+function edit${className}(){
+    var rows = ${className?uncap_first}grid.getSelectedRows();
     if (rows.length != 1) {
         top.Dialog.alert(Constant.noselect);
         return;
@@ -152,9 +154,9 @@ function delete${className}(){
         return;
     }
     top.Dialog.confirm(Constant.deletzMsg, function(){
-        $.post(contextPath +"${packageName?replace(".","/")}/delete${className}.do?moduleid="+moduleid, getSelectId(${className}grid), function(data){
+        $.post(contextPath +"${packageName?replace(".","/")}/delete${className}.do?moduleid="+moduleid, getSelectId(${className?uncap_first}grid), function(data){
             if (data.res) {
-                ${className}grid.loadData();
+                ${className?uncap_first}grid.loadData();
             }
             else {
                 top.Dialog.alert(data.message);
@@ -163,8 +165,8 @@ function delete${className}(){
     });
 }
 
-function getSelectId(${className}grid){
-    var selectedRows = ${className}grid.getSelectedRows();
+function getSelectId(${className?uncap_first}grid){
+    var selectedRows = ${className?uncap_first}grid.getSelectedRows();
     var selectedRowsLength = selectedRows.length;
     var ids = "";
     for (var i = 0; i < selectedRowsLength; i++) {
@@ -179,12 +181,12 @@ function getSelectId(${className}grid){
 function searchHandler(){
     var query = $.getHtmlToArray($("#searchForm"));
 
-    ${className}grid.setOptions({
+    ${className?uncap_first}grid.setOptions({
         params: query
     });
     //页号重置为1
-    ${className}grid.setNewPage(1);
-    ${className}grid.loadData();//加载数据
+    ${className?uncap_first}grid.setNewPage(1);
+    ${className?uncap_first}grid.loadData();//加载数据
 }
 
 function resetHandler(){
@@ -202,15 +204,15 @@ function resetHandler(){
 
 //刷新表格数据并重置排序和页数
 function refresh(isUpdate){
-    $("#" + ${className}grid.id + " tr[class*='l-selected']").removeClass("l-selected");
+    $("#" + ${className?uncap_first}grid.id + " tr[class*='l-selected']").removeClass("l-selected");
     if (isUpdate) {
         //重置排序
-        ${className}grid.options.sortName = "lstmntdate";
-        ${className}grid.options.sortOrder = "desc";
+        ${className?uncap_first}grid.options.sortName = "lstmntdate";
+        ${className?uncap_first}grid.options.sortOrder = "desc";
         //页号重置为1
-        ${className}grid.setNewPage(1);
+        ${className?uncap_first}grid.setNewPage(1);
     }
-    ${className}grid.loadData();
+    ${className?uncap_first}grid.loadData();
     controlGridBtn();
 }
 
@@ -233,7 +235,7 @@ function onGridUnSelectRow(){
 function controlGridBtn(){
     var obj = {
         "isFlow": true,
-        "quigrid": ${className}grid,
+        "quigrid": ${className?uncap_first}grid,
         "isCustom": true,
         "customModel": "assetinfo"
     }

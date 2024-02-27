@@ -134,7 +134,7 @@ public class ${className}Action extends ActionBase {
         trimFieldForStr(${className?uncap_first});
         try {
             format${className}ForSave(${className?uncap_first});
-            if (!Constant.OptionType.SAVE.equals(optionType)) {
+            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?cap_first}())) {
                 // 编辑
                 rstBiz = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, false);
                 // 记录日志
@@ -189,7 +189,7 @@ public class ${className}Action extends ActionBase {
         try {
             ResultData rstBiz = new ResultData();
             ResultData rst = new ResultData();
-            if (!Constant.OptionType.SAVE.equals(optionType)) {
+            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?cap_first}())) {
                 // 更新并提交
                 rstBiz = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, true);
                 // 记录日志

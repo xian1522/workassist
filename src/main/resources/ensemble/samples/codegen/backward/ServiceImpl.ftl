@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
+<#if isKeepAccount == "是">
 import com.joyin.ticm.accmn.kaconfig.service.KaConfigService;
 import com.joyin.ticm.accmn.kamn.kacomm.KaConstant;
 import com.joyin.ticm.accmn.kamn.model.SysKeepAccount;
 import com.joyin.ticm.accmn.kamn.service.KeepAccountService;
+import com.joyin.ticm.ka.sl.${className}KeepAccount;
+</#if>
 import com.joyin.ticm.bean.ResultData;
 import com.joyin.ticm.common.constant.Constant;
 import com.joyin.ticm.common.constant.Constant.FlowStateType;
 import com.joyin.ticm.dao.BaseDao;
 import com.joyin.ticm.dao.DaoException;
-import com.joyin.ticm.ka.sl.${className}KeepAccount;
 import com.joyin.ticm.page.Pager;
 import com.joyin.ticm.service.ServiceBase;
 import com.joyin.ticm.service.ServiceException;
