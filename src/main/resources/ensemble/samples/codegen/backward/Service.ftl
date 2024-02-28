@@ -78,4 +78,8 @@ public interface ${className}Service {
     */
     public ResultData rubAccountByBusinessNo(String businessNo) throws ServiceException;
 </#if>
+<#if isSafeFlow == "是">
+    public List<${className}> find${className}A(${className} ${className?uncap_first}) throws ServiceException;
+    public ResultData saveSafeAndSubmit(${className} ${className?uncap_first}, boolean isSubmit) throws ServiceException;
+</#if>
 }

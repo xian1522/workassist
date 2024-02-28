@@ -134,7 +134,7 @@ public class ${className}Action extends ActionBase {
         trimFieldForStr(${className?uncap_first});
         try {
             format${className}ForSave(${className?uncap_first});
-            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?cap_first}())) {
+            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
                 // 编辑
                 rstBiz = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, false);
                 // 记录日志
@@ -189,7 +189,7 @@ public class ${className}Action extends ActionBase {
         try {
             ResultData rstBiz = new ResultData();
             ResultData rst = new ResultData();
-            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?cap_first}())) {
+            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
                 // 更新并提交
                 rstBiz = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, true);
                 // 记录日志
@@ -478,6 +478,150 @@ public class ${className}Action extends ActionBase {
         }
         return methodName;
     }
+
+<#if isSafeFlow == "是">
+    public String check${className}() {
+        String methodName = "check${className}";
+        info(methodName, "判断该条${table.comment!}是否在做维护.");
+        List<${className}> list = null;
+        if (CommonUtil.isEmpty(${className?uncap_first})
+            || CommonUtil.isEmpty(${className?uncap_first}.getPlanid())) {
+            results.put("res", false);
+            results.put("message", "请选择一条数据 ");
+            return methodName;
+        }
+        try {
+            list = ${className?uncap_first}Service.find${className}A(${className?uncap_first});
+            if (CommonUtil.isNotEmpty(list) && list.size() > 1) {
+                results.put("res", false);
+                results.put("message", "流水号[" + list.get(0).getSeqid()+ "]正在维护此记录");
+            } else {
+                results.put("res", true);
+            }
+        }catch (ServiceException e) {
+            results.put("res", false);
+            results.put("message", e.getMessage());
+            processException(methodName, e.getMessage(), e);
+        }
+        return methodName;
+    }
+
+    public String safe${className}() {
+        String methodName = "safe${className}";
+        info(methodName, "初始化${table.comment!}维护页面.");
+        try {
+            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.getReqid());
+            format${className}ForPage(${className?uncap_first});
+            ${className?uncap_first}.set${pkname?lower_case?cap_first}(null);
+        }catch (ServiceException e) {
+            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            Constant.OperateType.STRING_UPDATE, e.getMessage(), e);
+        }
+        return SUCCESS;
+    }
+
+    public String saveSafe${className}() {
+        String methodName = "saveSafe${className}";
+        info(methodName, "维护 保存${table.comment!}信息");
+
+        UserInfo user = this.getSessionUserInfo();
+        // 当前登录用户机构号
+        ${className?uncap_first}.setLoginOrgid(user.getUser().getOrgid());
+        // 当前登录用户
+        ${className?uncap_first}.setLoginUserid(user.getUser().getUserid());
+        // 当前操作用户
+        ${className?uncap_first}.setTraUserid(user.getUser().getUserid());
+        // 业务更新用户
+        ${className?uncap_first}.setLstmntuser(user.getUser().getUserid());
+
+        // 操作结果
+        ResultData rs = new ResultData();
+        try {
+            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
+                opt = Constant.OperateType.STRING_UPDATE;
+                // 编辑
+                rs = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, false);
+            } else {
+                opt = Constant.OperateType.STRING_NEW;
+                ${className?uncap_first}.setEffectflag(Constant.EffectFlag.A);
+                ${className?uncap_first}.setCreateuser(this.getSessionUser().getUserid());
+                // 新增
+                rs = ${className?uncap_first}Service.saveSafeAndSubmit(${className?uncap_first}, false);
+            }
+            // 记录日志
+            writeOpLog(${className?uncap_first}.get${pkname?lower_case?cap_first}() + "", moduleid, opt);
+            if (rs.isSuccess()) {
+                results.put("res", true);
+            }else {
+                results.put("res", false);
+                results.put("message", rs.getResultMessage());
+            }
+        }
+        catch (ServiceException e) {
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}() + "",
+            opt, e.getMessage(), e);
+            results.put("res", false);
+            results.put("message", e.getMessage());
+        }
+        catch (HibernateOptimisticLockingFailureException e) {
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}() + "", opt, e.getMessage(), e);
+            results.put("res", false);
+            results.put("message", MessageUtil.getMessage(MessageUtil.Message.OP_LOG_0002));
+        }
+        return methodName;
+    }
+
+    public String submitSafe${className}() {
+        String methodName = "submitSafe${className}";
+        info(methodName, "维护 提交${table.comment!}信息");
+
+        UserInfo user = this.getSessionUserInfo();
+        // 当前登录用户机构号
+        ${className?uncap_first}.setLoginOrgid(user.getUser().getOrgid());
+        // 当前登录用户
+        ${className?uncap_first}.setLoginUserid(user.getUser().getUserid());
+        // 当前操作用户
+        ${className?uncap_first}.setTraUserid(user.getUser().getUserid());
+        // 业务更新用户
+        ${className?uncap_first}.setLstmntuser(user.getUser().getUserid());
+
+        // 操作结果
+        ResultData rs = new ResultData();
+        try {
+            if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
+            opt = Constant.OperateType.STRING_UPDATEANDSUBMIT;
+            // 编辑
+            rs = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, true);
+            } else {
+                opt = Constant.OperateType.STRING_UPDATEANDSUBMIT;
+                ${className?uncap_first}.setEffectflag(Constant.EffectFlag.A);
+                ${className?uncap_first}.setCreateuser(this.getSessionUser().getUserid());
+                // 新增
+                rs = ${className?uncap_first}Service.saveSafeAndSubmit(${className?uncap_first}, true);
+            }
+            // 记录日志
+            writeOpLog(${className?uncap_first}.get${pkname?lower_case?cap_first}() + "", moduleid, opt);
+            if (rs.isSuccess()) {
+                results.put("res", true);
+            }else {
+                results.put("res", false);
+                results.put("message", rs.getResultMessage());
+            }
+        }catch (ServiceException e) {
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}() + "",
+            opt, e.getMessage(), e);
+            results.put("res", false);
+            results.put("message", e.getMessage());
+        }
+        catch (HibernateOptimisticLockingFailureException e) {
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}() + "", opt, e.getMessage(), e);
+            results.put("res", false);
+            results.put("message", MessageUtil.getMessage(MessageUtil.Message.OP_LOG_0002));
+        }
+        return methodName;
+    }
+
+</#if>
 
     /**
     * 格式化页面展示信息

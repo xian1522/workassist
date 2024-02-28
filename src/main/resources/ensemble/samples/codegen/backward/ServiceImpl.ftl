@@ -137,6 +137,12 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			// 流程结束
 			if (flowRstStatus == FlowStateType.FLOW_OVER) {
 				${className?uncap_first}.setEffectflag(Constant.EffectFlag.E);
+<#if isSafeFlow == "是">
+			if(CommonUtil.isNotEmpty(${className?uncap_first}.getSrcid()) {
+				${className} old${className?uncap_first} = this.findById(${className?uncap_first}.getSrcid());
+				old${className?uncap_first}.setEffectflag(Constant.EffectFlag.D);
+			}
+</#if>
 <#if isKeepAccount == "是">
 				// 记账
 				rst = keepAccount(${className?uncap_first}, KaConstant.VIEW.NOT_VIEW);
@@ -402,5 +408,69 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}
         return rd;
     }
+
+
+<#if isSafeFlow == "是">
+	public List<${className}> find${className}A(${className} ${className?uncap_first}) throws ServiceException {
+		String methodName = "find${className}A";
+		List<${className}> ${className?uncap_first}List = new ArrayList<${className}>();
+		// 参数定义
+		List<Object> params = new ArrayList<Object>();
+		try {
+			String queryString = "from ${className} as ${className?uncap_first} where 1=1 ";
+			String queryWhere = "";
+			if (CommonUtil.isNotEmpty(secid)) {
+				queryWhere += " and  ${className?uncap_first}.planid = ? ";
+				params.add(secid);
+			}
+			if (CommonUtil.isNotEmpty(orgid)) {
+				queryWhere += " and  ${className?uncap_first}.orgid = ? ";
+				params.add(orgid);
+			}
+			queryWhere += " and ${className?uncap_first}.effectflag = 'A'";
+			${className?uncap_first}List = invAssetDao.findByHql(queryString + queryWhere, params);
+			// 返回
+			return ${className?uncap_first}List;
+		}catch (DaoException ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}
+	}
+	public ResultData saveSafeAndSubmit(${className} ${className?uncap_first}, boolean isSubmit) throws ServiceException {
+		String methodName = "saveSafeAndSubmit";
+		info(methodName, "param[${className?uncap_first}]: " + ${className?uncap_first});
+
+		ResultData rst = new ResultData();
+
+		try {
+			// 判断是否有维护记录
+			List<${className}> list = find${className}A(${className?uncap_first});
+			// 存在维护的记录
+			if(CommonUtil.isNotEmpty(list) && list.size()>1){
+				throw new ServiceException(ServiceException.DATA_HAS_BEEN_EXIST, "流水号["+list.get(0).${pkname?lower_case?cap_first}()+"]正在维护此记录");
+			}
+			baseDao.save(${className?uncap_first});
+
+			${className?uncap_first}.setLinkid(${className?uncap_first}.get${pkname?lower_case?cap_first}() + "");
+			if (isSubmit) {
+				// 新建维护流程并提交流程
+				rst = flowProcessService.startModifyProcessTask(Constant.FlowKey.FLOW, null, ${className?uncap_first});
+			}else {
+				// 新建维护流程实例
+				rst = flowProcessService.startModifyByKey(Constant.FlowKey.FLOW, null,${className?uncap_first});
+			}
+			if (rst.isSuccess() == false) {
+				return rst;
+			}
+		}catch (DaoException ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}catch (ServiceException ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}
+		rst.setObject(${className?uncap_first});
+		rst.setSuccess(true);
+		return rst;
+	}
+</#if>
+
 </#if>
 }
