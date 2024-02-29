@@ -405,7 +405,7 @@ public class ${className}Action extends ActionBase {
 
         String opt = Constant.OperateType.STRING_VIEW_LIST;
         try {
-            if (CommonUtil.isEmpty(optype) || optype.equals(WebConstant.OptionType.DEAL)) {
+            if (CommonUtil.isEmpty(optype) || optype.equals(Constant.OptionType.DEAL)) {
                 flowResultData = getActiveFlowState();
                 if (CommonUtil.isNotEmpty(flowResultData.getList())) {
                     rs = ${className?uncap_first}Service.find${className}OfPage(${className?uncap_first}, pager, optype,(List<String>) flowResultData.getList());

@@ -14,6 +14,7 @@ import com.joyin.ticm.common.constant.Constant;
 import com.joyin.ticm.common.util.BigDecimalUtil;
 import com.joyin.ticm.common.util.CommonUtil;
 import com.joyin.ticm.service.ServiceException;
+import com.joyin.ticm${packageName}.model.${className};
 
 /**
  * @Description ${table.comment!}记账实体
@@ -27,21 +28,21 @@ public class ${className}KeepAccount {
     */
 	public SysKeepAccount getSysKeepAccount(KaConfigService kaConfigService,
 			${className} ${className?uncap_first}) throws ServiceException{
-		String orgid = ${className?uncap_first}.getSlDeal().getOrgid();
-		String orgname = ${className?uncap_first}.getSlDeal().getOrgname();
-		String recaccremark = ${className?uncap_first}.getAccremark();
+		String orgid = ${className?uncap_first}.getOrgid();
+		String orgname = ${className?uncap_first}.getOrgname();
+		String accremark = ${className?uncap_first}.getAccremark();
 		
 		// 记账汇总信息
 		SysKeepAccount sysKeepAccount = new SysKeepAccount(FLAG.FLAG_0, // 正常业务标识
-				${className?uncap_first}.getSlDeal().getReqid(), // 相关业务的编号
+				${className?uncap_first}.getReqid(), // 相关业务的编号
 				Constant.BusinessType., // 业务类别
 				Constant.SysModuleId.SL_, // 业务子类别
-				${className?uncap_first}.get${pkname?cap_first}(),
+				${className?uncap_first}.get${pkname?lower_case?cap_first}(),
 				${className?uncap_first}.getTraUserid(), // 经办人
 				${className?uncap_first}.getLoginUserid(), // 复核人
 				orgid, // 机构编号
 				orgname, // 机构名称
-				recaccremark); // 记账摘要
+				accremark); // 记账摘要
 		try {
 			sysKeepAccount.setJbpmProcessid(${className?uncap_first}.getJbpmProcessid());
 			// 记账明细Model
@@ -59,7 +60,7 @@ public class ${className}KeepAccount {
 			Map<String, String> paraMap = new HashMap<String, String>();
 
             // 记账摘要
-            paraMap.put("Accremark", recaccremark);
+            paraMap.put("Accremark", accremark);
 			
 			// 获取会计分录
 			kadetailSet = kaConfigService.getKaDetailList(sceneMap, paraMap);

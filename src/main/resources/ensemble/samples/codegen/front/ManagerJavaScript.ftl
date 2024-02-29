@@ -50,15 +50,17 @@ function init${className}Grid(){
         {display: '状态', name: 'stateName', align: 'left', width: 180,frozen: "true"},
 <#list table.columns as column>
     <#if column.comment??>
-    { display: '${column.comment!}', name: '${column.name}', align: <#if column.typeName='Date' || column.typeName='BigDecimal'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120
-            <#if column.typeName='BigDecimal'>
-                ,render: function (rowdata, rowindex, value, column){
+        <#if column.typeName='Date' || column.typeName='BigDecimal'>
+            { display: '${column.comment!}', name: '${column.name}', align: 'right', width: 120,
+                render: function (rowdata, rowindex, value, column){
                     if( value != null){
                         return formatRound(value,<#if column.size==26>2<#elseif column.size==18>4</#if>);
                     }
-                }}
-            </#if>
-        },
+                }
+            },
+        <#else>
+            { display: '${column.comment!}', name: '${column.name}', align: <#if column.typeName= 'Date'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
+        </#if>
     </#if>
 </#list>
     ];
@@ -276,8 +278,7 @@ function controlGridBtn(){
     var obj = {
         "isFlow": true,
         "quigrid": ${className?uncap_first}grid,
-        "isCustom": true,
-        "customModel": "assetinfo"
+        "isCustom": true
     }
     $.getSelectRows(obj);
 }

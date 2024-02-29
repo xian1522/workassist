@@ -36,6 +36,8 @@ public class CodeGenController {
     @FXML
     private TextField tablename;
     @FXML
+    private TextField subTableName;
+    @FXML
     private ComboBox isKeepAccount; //是否记账
     @FXML
     private ComboBox isSafeFlow; //是否维护流程
@@ -50,7 +52,14 @@ public class CodeGenController {
             warning.showAndWait();
             return;
         }
-        Map root = processDataBaseMeta(tablename);
+
+        Map root = new HashMap();
+
+        processDataBaseMeta(tablename, root);
+        //处理子表
+        if(subTableName.getText() != null) {
+            processDataBaseMetaSub(subTableName.getText(), root);
+        }
 
         try {
             List<Template> templateList = processTemplate();
@@ -59,26 +68,39 @@ public class CodeGenController {
 
             for (Template template: templateList) {
 
-                String generateFilePath = "D:\\freemarker/" + root.get("className").toString();
+                String generateFilePath = "D:\\freemarker/";
 
                 String templateName = template.getName();
 
-                if("Model.ftl".equals(templateName)) {
-                    generateFilePath += ".java";
-                }else if("Hibernate.ftl".equals(templateName)) {
-                    generateFilePath += ".hbm.xml";
-                }else if("Config.ftl".equals(templateName)){
-                    generateFilePath += ".xml";
-                }else if("ManagerJs.ftl".equals(templateName)){
-                    generateFilePath += "Manager.js";
-                }else if("ManagerJsp.ftl".equals(templateName)){
-                    generateFilePath += "Manager.jsp";
-                }else if("BaseInfo.ftl".equals(templateName)){
-                    generateFilePath += "BaseInfo.html";
+                String className = root.get("className").toString();
+                if(templateName.indexOf("JavaScript") > 0 || templateName.indexOf("Jsp") > 0) {
+                    className = StringUtils.uncapitalize(className);
+                    generateFilePath += "front/";
                 }else {
-                    generateFilePath += templateName.replace("ftl","java");
+                    generateFilePath += "backward/";
                 }
-                out = new FileOutputStream(generateFilePath);
+                if("Model.ftl".equals(templateName)) {
+                    generateFilePath += className + ".java";
+                }else if("Hibernate.ftl".equals(templateName)) {
+                    generateFilePath += className + ".hbm.xml";
+                }else if("Config.ftl".equals(templateName)){
+                    generateFilePath += className + ".xml";
+                }else if(templateName.indexOf("JavaScript") > 0){
+                    int endIndex = templateName.indexOf("JavaScript");
+                    generateFilePath += className + templateName.substring(0, endIndex) + ".js";
+                }else if(templateName.indexOf("Jsp") > 0){
+                    int endIndex = templateName.indexOf("Jsp");
+                    generateFilePath += className + templateName.substring(0, endIndex) + ".jsp";
+                }else {
+                    generateFilePath += className + templateName.replace("ftl","java");
+                }
+
+
+                File generateFile = new File(generateFilePath);
+
+                out = FileUtils.openOutputStream(generateFile);
+
+//                out = new FileOutputStream(generateFile);
 
                 Writer writer = new OutputStreamWriter(out);
 
@@ -126,9 +148,13 @@ public class CodeGenController {
             Template configTemplate = configuration.getTemplate("Config.ftl");
             Template keepAccountTemplate = configuration.getTemplate("KeepAccount.ftl");
 
-            Template jsTemplate = configuration.getTemplate("ManagerJs.ftl");
-            Template jspTemplate = configuration.getTemplate("ManagerJsp.ftl");
-            Template baseInfoTemplate = configuration.getTemplate("BaseInfo.ftl");
+            Template managerJsTemplate = configuration.getTemplate("ManagerJavaScript.ftl");
+            Template editJsTemplate = configuration.getTemplate("EditJavaScript.ftl");
+            Template managerJspTemplate = configuration.getTemplate("ManagerJsp.ftl");
+            Template baseTemplate = configuration.getTemplate("BaseJsp.ftl");
+            Template editTemplate = configuration.getTemplate("EditJsp.ftl");
+            Template remarkTemplate = configuration.getTemplate("remarkJsp.ftl");
+            Template userInfoTemplate = configuration.getTemplate("userInfoJsp.ftl");
 
             templateList.add(actionTemplate);
             templateList.add(serviceTemplate);
@@ -142,19 +168,20 @@ public class CodeGenController {
                 templateList.add(keepAccountTemplate);
             }
 
-            templateList.add(jspTemplate);
-            templateList.add(jsTemplate);
-            templateList.add(baseInfoTemplate);
-
+            templateList.add(managerJsTemplate);
+            templateList.add(editJsTemplate);
+            templateList.add(managerJspTemplate);
+            templateList.add(baseTemplate);
+            templateList.add(editTemplate);
+            templateList.add(remarkTemplate);
+            templateList.add(userInfoTemplate);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return templateList;
     }
 
-    public Map processDataBaseMeta(String tableName) {
-
-        Map root = new HashMap();
+    public void processDataBaseMeta(String tableName, Map root) {
 
         DataSource ds = DSFactory.get();
         Table table = MetaUtil.getTableMeta(ds, tableName);
@@ -204,8 +231,10 @@ public class CodeGenController {
 
         root.put("isKeepAccount", isKeepAccount.getValue());
         root.put("isSafeFlow", isSafeFlow.getValue());
+    }
 
-        return root;
+    private void processDataBaseMetaSub(String subTableName, Map root) {
+
     }
 
     public ComboBox getIsKeepAccount() {

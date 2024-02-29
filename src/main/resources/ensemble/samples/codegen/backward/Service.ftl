@@ -42,11 +42,11 @@ public interface ${className}Service {
     public ResultData find${className}OfPage(${className} ${className?uncap_first}, Pager pager,String optype, List<String> ${className?uncap_first}Reqids) throws ServiceException;
     /**
     * 根据流水号查询债券借贷到期数据
-    * @param seqid 流水号
+    * @param ${pkname?lower_case} 主键
     * @return ${className} 到期交易
     * @throws ServiceException
     */
-    public ${className} findById(String seqid) throws ServiceException;
+    public ${className} findById(String ${pkname?lower_case}) throws ServiceException;
 
     /**
     * 删除${table.comment!}

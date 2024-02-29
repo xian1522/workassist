@@ -48,7 +48,7 @@ public class ${className}DaoImpl extends AbstractDao implements ${className}Dao 
             List<Object> paramValues = new ArrayList<Object>();
             //机构号查询
             if (CommonUtil.isNotEmpty(${className?uncap_first}.getOrgid())) {
-                strWhere += " and ${className?uncap_first}.slDeal.orgid in ("+${className?uncap_first}.getOrgid()+")";
+                strWhere += " and ${className?uncap_first}.orgid in ("+${className?uncap_first}.getOrgid()+")";
             }
             //有效性查询
             if (!Constant.EffectFlag.ALL.equals(${className?uncap_first}.getEffectflag())) {
@@ -59,7 +59,7 @@ public class ${className}DaoImpl extends AbstractDao implements ${className}Dao 
             }
             //查询需要办理的数据
             if (Constant.OptionType.DEAL.equals(optype)) {
-                hql+=" AND ${className?uncap_first}.seqid IN (" + CommonUtil.listToSqlStr(${className?uncap_first}Reqids)
+                hql+=" AND ${className?uncap_first}.${pkname?lower_case} IN (" + CommonUtil.listToSqlStr(${className?uncap_first}Reqids)
                         + ")";
             }
             
@@ -87,12 +87,12 @@ public class ${className}DaoImpl extends AbstractDao implements ${className}Dao 
             return rstData;
         }
         catch (JDBCException ex) {
-			error(methodName, "Error find ississuebDealList", ex);
+			error(methodName, "Error find ${className?uncap_first}List", ex);
 			throw new DaoException(DaoException.ERROR_GENERIC_JDBC_EXCEPTION,
 					ex);
 		}
 		catch (HibernateException ex) {
-			error(methodName, "Error find ississuebDealList", ex);
+			error(methodName, "Error find ${className?uncap_first}List", ex);
 			throw new DaoException(DaoException.ERROR_HIBERNATE, ex);
 		}
 	}

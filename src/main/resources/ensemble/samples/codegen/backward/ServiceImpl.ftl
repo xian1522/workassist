@@ -11,6 +11,7 @@ import com.joyin.ticm.accmn.kamn.model.SysKeepAccount;
 import com.joyin.ticm.accmn.kamn.service.KeepAccountService;
 import com.joyin.ticm.ka.sl.${className}KeepAccount;
 </#if>
+import com.joyin.ticm.common.util.CommonUtil;
 import com.joyin.ticm.bean.ResultData;
 import com.joyin.ticm.common.constant.Constant;
 import com.joyin.ticm.common.constant.Constant.FlowStateType;
@@ -208,15 +209,14 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 
 	/**
 	 * 根据流水号查询债券借贷到期数据
-	 * @param reqid
-	 *            流水号
+	 * @param ${pkname?lower_case} 主键
 	 * @return ${className} 到期交易
 	 * @throws ServiceException
 	 */
 	@Override
-	public ${className} findById(String reqid) throws ServiceException {
+	public ${className} findById(String ${pkname?lower_case}) throws ServiceException {
 		String methodName = "findById";
-		info(methodName, "param[reqid]: " + reqid);
+		info(methodName, "param[${pkname?lower_case}]: " + ${pkname?lower_case});
 
 		try {
 			${className} ${className?uncap_first} = baseDao.findById(${className}.class, reqid);
@@ -315,7 +315,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			throws Exception {
 		String methodName = "saveAccountView";
 		ResultData rsData = new ResultData();
-		if (CommonUtil.isEmpty(${className?uncap_first}.getSeqid())) {
+		if (CommonUtil.isEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
 			rsData.setSuccess(false);
 			rsData.setResultMessage("业务ID为空");
 			return rsData;
@@ -372,9 +372,6 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			return rs;
 		}
 		catch (ServiceException e) {
-			throw processException(methedName, e.getMessage(), e);
-		}
-		catch (DaoException e) {
 			throw processException(methedName, e.getMessage(), e);
 		}
 

@@ -5,7 +5,7 @@
     <class name="com.joyin.ticm${packageName}.model.${className}" table="${table.tableName}">
 <#list table.columns as column>
     <#if column.isPk() == true>
-        <id name="${column.name}" type="${column.typeName}">
+        <id name="${column.name}" type="${column.typeName?uncap_first}">
             <column name="${column.name?upper_case}" length="${column.size}" />
             <generator class="assigned"></generator>
         </id>
