@@ -50,7 +50,7 @@ function init${className}Grid(){
         {display: '状态', name: 'stateName', align: 'left', width: 180,frozen: "true"},
 <#list table.columns as column>
     <#if column.comment??>
-        <#if column.typeName='Date' || column.typeName='BigDecimal'>
+        <#if column.typeName='BigDecimal'>
             { display: '${column.comment!}', name: '${column.name}', align: 'right', width: 120,
                 render: function (rowdata, rowindex, value, column){
                     if( value != null){

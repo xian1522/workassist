@@ -1,6 +1,12 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="com.joyin.ticm.common.constant.Constant"%>
 <%@taglib uri="/struts-tags" prefix="s"%>
+<script type="text/javascript">
+	var SubPageSource={
+		${pkname?lower_case}:"<s:property value="${className?uncap_first}.${pkname?lower_case}"/>",
+	}
+
+</script>
 <script src="${r"${pageContext.request.contextPath}"}/javascript${packageName?replace(".","/")}/${className?uncap_first}Edit.js" type="text/javascript"></script>
 <input type="hidden" id="lstmntdate" name="${className?uncap_first}.lstmntdate" value="<s:property value="${className?uncap_first}.lstmntdate"/>" />
 <input type="hidden" id="createdate" name="${className?uncap_first}.createdate" value="<s:property value="${className?uncap_first}.createdate"/>" />

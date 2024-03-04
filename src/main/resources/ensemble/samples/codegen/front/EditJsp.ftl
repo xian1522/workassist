@@ -18,6 +18,10 @@
 				return;
 			}
 			var data = $.getHtmlToArray($('#edit_form'));
+		<#if subTable??>
+			var ${subClassName?lower_case}gridStr = JSON.stringify(${subClassName?lower_case}Grid.getData());
+			data.push({name:"${subClassName?lower_case}gridStr",value:${subClassName?lower_case}gridStr});
+		</#if>
 			$.post("<%=path%>${packageName?replace(".","/")}/submit${className}.do", data , function(result) {
 				if (result.res == true) {
 					closeWin();
@@ -35,6 +39,10 @@
 				return;
 			}
 			var data = $.getHtmlToArray($('#edit_form'));
+		<#if subTable??>
+			var ${subClassName?lower_case}gridStr = JSON.stringify(${subClassName?lower_case}Grid.getData());
+			data.push({name:"${subClassName?lower_case}gridStr",value:${subClassName?lower_case}gridStr});
+		</#if>
 			$.post("<%=path%>${packageName?replace(".","/")}/save${className}.do", data , function(result) {
 				if (result.res == true) {
 					closeWin();

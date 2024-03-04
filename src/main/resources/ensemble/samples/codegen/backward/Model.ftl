@@ -14,6 +14,10 @@ public class ${className} extends DataForm {
     private ${column.typeName} ${column.name};  <#if column.comment??> // ${column.comment} </#if>
 </#list>
 
+<#if subTable??>
+    private List<${subClassName}> ${subClassName?uncap_first}List;
+</#if>
+
 <#list table.columns as column>
     public ${column.typeName} get${column.name?cap_first}() {
         return this.${column.name};
@@ -22,4 +26,13 @@ public class ${className} extends DataForm {
         this.${column.name} = ${column.name};
     }
 </#list>
+<#if subTable??>
+    public List<${subClassName}> get${subClassName}List() {
+        return ${subClassName?uncap_first}List;
+    }
+
+    public void set${subClassName}List(List<${subClassName}> ${subClassName?uncap_first}List) {
+        this.${subClassName?uncap_first}List = ${subClassName?uncap_first}List;
+    }
+</#if>
 }

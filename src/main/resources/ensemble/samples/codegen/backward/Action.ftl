@@ -299,8 +299,8 @@ public class ${className}Action extends ActionBase {
     /**
     * ${table.comment!}流程操作页面跳转
     */
-    public String ${className?uncap_first}FlowTask() {
-        String methodName = "${className?uncap_first}FlowTask";
+    public String ${className?uncap_first}Flow() {
+        String methodName = "${className?uncap_first}Flow";
         info(methodName, "${table.comment!}流程操作页面跳转");
 
         flowState = new FlowState();
@@ -622,7 +622,23 @@ public class ${className}Action extends ActionBase {
     }
 
 </#if>
+<#if subTable??>
+    public String find${subClassName}List() {
+        String methodName = "find${subClassName}List";
+        info(methodName,"查询${subTable.comment!}信息");
+        try {
+            List<${subClassName}> ${subClassName?uncap_first}List
+                    = ${className?uncap_first}Service.find${subClassName}List(${className?uncap_first});
+            for(BillDetail detail : billDetailList){
 
+            }
+            results.put("rows", dtoList);
+        } catch (ServiceException e) {
+            processException(methodName, e.getMessage(), e);
+        }
+        return methodName;
+    }
+</#if>
     /**
     * 格式化页面展示信息
     */
@@ -631,7 +647,12 @@ public class ${className}Action extends ActionBase {
     }
 
     private void format${className}ForSave(${className} ${className?uncap_first}){
-
+<#if subTable??>
+        String ${subClassName?lower_case}gridStr = request.getParameter("${subClassName?lower_case}gridStr");
+        List<${subClassName}> ${subClassName?uncap_first}List = new ArrayList<${subClassName}>();
+        ${subClassName?uncap_first}List = JsonUtil.jsonToObjectList(${subClassName?lower_case}gridStr,${subClassName}.class);
+        ${className?uncap_first}.set${subClassName}List(${subClassName?uncap_first}List);
+</#if>
     }
 
 

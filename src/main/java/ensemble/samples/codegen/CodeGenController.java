@@ -20,6 +20,7 @@ import freemarker.template.TemplateExceptionHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,12 +56,13 @@ public class CodeGenController {
 
         Map root = new HashMap();
 
-        processDataBaseMeta(tablename, root);
+        TableGen table = processDataBaseMeta(tablename);
+        processTableData(table, root);
         //处理子表
-        if(subTableName.getText() != null) {
-            processDataBaseMetaSub(subTableName.getText(), root);
+        if(StringUtils.isNotEmpty(subTableName.getText())) {
+            TableGen subTable = processDataBaseMeta(subTableName.getText());
+            processTableDataSub(subTable, root);
         }
-
         try {
             List<Template> templateList = processTemplate();
 
@@ -73,16 +75,26 @@ public class CodeGenController {
                 String templateName = template.getName();
 
                 String className = root.get("className").toString();
+                Object subClassName = root.get("subClassName");
+
                 if(templateName.indexOf("JavaScript") > 0 || templateName.indexOf("Jsp") > 0) {
-                    className = StringUtils.uncapitalize(className);
+                    if(templateName.startsWith("Sub")) {
+                        className = StringUtils.uncapitalize(subClassName.toString());
+                    }else{
+                        className = StringUtils.uncapitalize(className);
+                    }
                     generateFilePath += "front/";
                 }else {
                     generateFilePath += "backward/";
                 }
                 if("Model.ftl".equals(templateName)) {
                     generateFilePath += className + ".java";
+                }else if("SubModel.ftl".equals(templateName)){
+                    generateFilePath += subClassName + ".java";
                 }else if("Hibernate.ftl".equals(templateName)) {
                     generateFilePath += className + ".hbm.xml";
+                }else if("SubHibernate.ftl".equals(templateName)) {
+                    generateFilePath += subClassName + ".hbm.xml";
                 }else if("Config.ftl".equals(templateName)){
                     generateFilePath += className + ".xml";
                 }else if(templateName.indexOf("JavaScript") > 0){
@@ -99,8 +111,6 @@ public class CodeGenController {
                 File generateFile = new File(generateFilePath);
 
                 out = FileUtils.openOutputStream(generateFile);
-
-//                out = new FileOutputStream(generateFile);
 
                 Writer writer = new OutputStreamWriter(out);
 
@@ -156,6 +166,10 @@ public class CodeGenController {
             Template remarkTemplate = configuration.getTemplate("remarkJsp.ftl");
             Template userInfoTemplate = configuration.getTemplate("userInfoJsp.ftl");
 
+            Template subModelTemplate = configuration.getTemplate("SubModel.ftl");
+            Template subHiberateTemplate = configuration.getTemplate("SubHibernate.ftl");
+            Template subJspTemplate = configuration.getTemplate("SubJsp.ftl");
+
             templateList.add(actionTemplate);
             templateList.add(serviceTemplate);
             templateList.add(serviceImplTemplate);
@@ -166,6 +180,11 @@ public class CodeGenController {
             templateList.add(configTemplate);
             if(isKeepAccount.getValue().equals("是")) {
                 templateList.add(keepAccountTemplate);
+            }
+            if(StringUtils.isNotEmpty(subTableName.getText())){
+                templateList.add(subModelTemplate);
+                templateList.add(subHiberateTemplate);
+                templateList.add(subJspTemplate);
             }
 
             templateList.add(managerJsTemplate);
@@ -181,10 +200,10 @@ public class CodeGenController {
         return templateList;
     }
 
-    public void processDataBaseMeta(String tableName, Map root) {
+    public TableGen processDataBaseMeta(String tableName) {
 
         DataSource ds = DSFactory.get();
-        Table table = MetaUtil.getTableMeta(ds, tableName);
+        Table table =  MetaUtil.getTableMeta(ds, tableName);
 
         HashSet<String> importList = new HashSet<String>();
 
@@ -213,6 +232,15 @@ public class CodeGenController {
             column.setTypeName(javaType);
         }
 
+        TableGen tableGen = new TableGen();
+        tableGen.setImportList(importList);
+        tableGen.setTable(table);
+
+        return tableGen;
+    }
+
+    private void processTableData(TableGen tableGen, Map root){
+        Table table = tableGen.getTable();
         root.put("table",table);
 
         String[] tableNames = table.getTableName().split("_");
@@ -226,15 +254,29 @@ public class CodeGenController {
 
         root.put("className", className);
         root.put("packageName", packageName);
-        root.put("importList", importList);
+        root.put("importList", tableGen.getImportList());
         root.put("pkname",table.getPkNames().stream().findFirst().get());
 
         root.put("isKeepAccount", isKeepAccount.getValue());
         root.put("isSafeFlow", isSafeFlow.getValue());
     }
 
-    private void processDataBaseMetaSub(String subTableName, Map root) {
+    private void processTableDataSub(TableGen tableGen, Map root) {
+        Table subTable = tableGen.getTable();
 
+        root.put("subTable",subTable);
+
+        String[] tableNames = subTable.getTableName().split("_");
+        String packageName = "";
+        String className = "";
+        for(String tempTableName : tableNames){
+            tempTableName = tempTableName.toLowerCase();
+            className += StringUtils.capitalize(tempTableName);
+            packageName += "." + tempTableName;
+        }
+
+        root.put("subImportList", tableGen.getImportList());
+        root.put("subClassName", className);
     }
 
     public ComboBox getIsKeepAccount() {

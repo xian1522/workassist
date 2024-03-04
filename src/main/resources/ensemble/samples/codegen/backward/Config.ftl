@@ -62,8 +62,8 @@ VALUES('2101', '${table.comment!}', '21', 'EXPECT', '1', 0, 1, 3, 'Y', 'C', '${p
 
 DELETE FROM SYS_FLOW_TASK WHERE FLOW_KEY = '${className}Flow';
 INSERT INTO SYS_FLOW_TASK (MODULEID, FLOW_KEY, TASK_NAME, GROUPID, ORGPERMIT, DETAILURL, TASK_ORDER, LSTMNTDATE, LSTMNTUSER, EFFECTFLAG, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, OPORGKEY, OPTTYPE, SERVICENAME)
-VALUES('2101', '${className}Flow', '经办', 1, NULL, '${packageName?replace(".","/")?substring(1)}/${className?uncap_first}FlowTask', 1, sysdate, 'gqliu', 'E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+VALUES('2101', '${className}Flow', '经办', 1, NULL, '${packageName?replace(".","/")?substring(1)}/flow/${className?uncap_first}Flow_${className?uncap_first}Edit', 1, sysdate, 'gqliu', 'E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO SYS_FLOW_TASK (MODULEID, FLOW_KEY, TASK_NAME, GROUPID, ORGPERMIT, DETAILURL, TASK_ORDER, LSTMNTDATE, LSTMNTUSER, EFFECTFLAG, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, OPORGKEY, OPTTYPE, SERVICENAME)
-VALUES('2101', '${className}Flow', '复核', 1, NULL, '${packageName?replace(".","/")?substring(1)}/${className?uncap_first}FlowTask', 2, sysdate, 'gqliu', 'E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+VALUES('2101', '${className}Flow', '复核', 1, NULL, '${packageName?replace(".","/")?substring(1)}/flow/${className?uncap_first}Flow_${className?uncap_first}Audit', 2, sysdate, 'gqliu', 'E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 

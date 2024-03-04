@@ -61,11 +61,11 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 
 		ResultData rst = new ResultData();
 		if (CommonUtil.isEmpty(${className?uncap_first}.getReqid())) {
-			String reqid = this.getBusinessId(Constant.BusinessIdType.SL_DUE,
+			String ${pkname?lower_case} = this.getBusinessId(Constant.BusinessIdType.${table.tableName},
 					${className?uncap_first}.getOrgid());
-			${className?uncap_first}.setReqid(reqid);
+			${className?uncap_first}.set${pkname?lower_case?cap_first}(${pkname?lower_case});
 		}
-		${className?uncap_first}.setLinkid(${className?uncap_first}.getReqid());
+		${className?uncap_first}.setLinkid(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 
 		// 流程返回结果
 		ResultData rstFlow = new ResultData();
@@ -87,6 +87,14 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 				}
 			}
 			baseDao.saveOrUpdate(${className?uncap_first});
+
+<#if subTable??>
+			delete${subClassName}By${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
+			for (${subClassName} ${subClassName?uncap_first} : ${className?uncap_first}.get${subClassName}List()) {
+			${subClassName?uncap_first}.set${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
+				baseDao.save(${subClassName?uncap_first});
+			}
+</#if>
 			
 			rst.setSuccess(true);
 			rst.setObject(${className?uncap_first});
@@ -152,6 +160,13 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			}
 			// 更新业务信息
 			baseDao.saveOrUpdate(${className?uncap_first});
+<#if subTable??>
+			delete${subClassName}By${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
+			for (${subClassName} ${subClassName?uncap_first} : ${className?uncap_first}.get${subClassName}List()) {
+				${subClassName?uncap_first}.set${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
+				baseDao.save(${subClassName?uncap_first});
+			}
+</#if>
 			rst.setSuccess(true);
 		}
 		catch (DaoException ex) {
@@ -405,7 +420,38 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}
         return rd;
     }
+<#if subTable??>
+	private void delete${subClassName}By${pkname?lower_case?cap_first}(String ${pkname?lower_case}) throws DaoException,ServiceException {
+		String methodName="delete${subClassName}By${pkname?lower_case?cap_first}" ;
+		String message="删除${subTable.comment!}明细" ;
+		info(methodName, message+",params[${pkname?lower_case}]="+${pkname?lower_case});
 
+		String hql="DELETE ${subClassName} WHERE ${pkname?lower_case}=:${pkname?lower_case} ";
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("${pkname?lower_case}", ${pkname?lower_case});
+		baseDao.executeHql(hql, paramMap, null);
+	}
+
+	public find${subClassName}List(${className} ${className?uncap_first}) throws ServiceException {
+		String methodName = "find${className}A";
+		List<${subClassName}> ${subClassName?uncap_first}List = new ArrayList<${subClassName}>();
+		// 参数定义
+		List<Object> params = new ArrayList<Object>();
+		try {
+			String queryString = "from ${subClassName} as ${subClassName?uncap_first} where 1=1 ";
+			String queryWhere = "";
+			if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
+				queryWhere += " and  ${className?uncap_first}.${pkname?lower_case} = ? ";
+				params.add(${className?uncap_first}.get${pkname?lower_case?cap_first}());
+			}
+			${subClassName?uncap_first}List = baseDao.findByParams(queryString + queryWhere, params.toArray());
+			// 返回
+			return ${subClassName?uncap_first}List;
+		}catch (DaoException ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}
+	}
+</#if>
 
 <#if isSafeFlow == "是">
 	public List<${className}> find${className}A(${className} ${className?uncap_first}) throws ServiceException {
@@ -425,7 +471,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 				params.add(orgid);
 			}
 			queryWhere += " and ${className?uncap_first}.effectflag = 'A'";
-			${className?uncap_first}List = invAssetDao.findByHql(queryString + queryWhere, params);
+			${className?uncap_first}List = baseDao.findByParams(queryString + queryWhere, params.toArray());
 			// 返回
 			return ${className?uncap_first}List;
 		}catch (DaoException ex) {
