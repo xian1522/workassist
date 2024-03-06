@@ -8,6 +8,7 @@ public enum Db2ColumnType {
     TIMESTAPME(93, "Timestamp"),
     DATE(91, "Date"),
     INTEGER(4, "Integer"),
+    BIGINT(-5, "Long"),
     DECIMAL(3, "BigDecimal");
 
     private int jdbcType;

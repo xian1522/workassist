@@ -4,59 +4,99 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ensemble.samples.codegen.CodeGenController">
+<AnchorPane prefHeight="437.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ensemble.samples.codegen.CodeGenController">
    <children>
-      <GridPane fx:id="codegenForm" prefHeight="93.0" prefWidth="600.0" vgap="40.0" AnchorPane.topAnchor="60.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="178.00001525878906" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="468.99998474121094" minWidth="10.0" prefWidth="421.99998474121094" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <TabPane fx:id="tabPane" prefHeight="365.0" prefWidth="600.0" AnchorPane.topAnchor="0.0">
+         <tabs>
+            <Tab fx:id="dealTab" text="首期交易">
+               <content>
+                  <GridPane fx:id="codegenForm" prefHeight="301.0" prefWidth="600.0" vgap="40.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="178.00001525878906" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="468.99998474121094" minWidth="10.0" prefWidth="421.99998474121094" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="15.0" prefWidth="135.0" text="主表:" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
+                        <Label alignment="CENTER_RIGHT" prefHeight="15.0" prefWidth="135.0" text="文件生成路径:" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                        <TextField fx:id="tablename" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets right="120.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="packagepath" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <GridPane.margin>
+                              <Insets right="120.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="子表:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否记账:" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="isKeepAccount" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="subTableName" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="120.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否维护流程:" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="isSafeFlow" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                     <padding>
+                        <Insets top="20.0" />
+                     </padding>
+                  </GridPane>
+               </content>
+            </Tab>
+             <Tab fx:id="countdrawTab" text="计提">
+                 <content>
+                     <GridPane prefHeight="336.0" prefWidth="470.0" vgap="40.0">
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                     </rowConstraints>
+                     <columnConstraints>
+                        <ColumnConstraints prefWidth="178.0" />
+                        <ColumnConstraints minWidth="10.0" prefWidth="421.0" />
+                     </columnConstraints>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="15.0" prefWidth="135.0" text="主表:" />
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefWidth="135.0" text="子表:" GridPane.rowIndex="1" />
+                        <TextField fx:id="cdTablename" prefHeight="23.0" prefWidth="266.0" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets right="120.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="subCdTablename" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="120.0" />
+                           </GridPane.margin>
+                        </TextField>
+                     </children>
+                     <padding>
+                        <Insets top="20.0" />
+                     </padding></GridPane>
+                 </content>
+             </Tab>
+         </tabs>
+      </TabPane>
+      <HBox layoutX="382.0" layoutY="373.0" prefHeight="23.0" prefWidth="218.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="382.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="373.0">
          <children>
-            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="15.0" prefWidth="135.0" text="主表:" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
-            <Label alignment="CENTER_RIGHT" prefHeight="15.0" prefWidth="135.0" text="文件生成路径:" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-            <TextField fx:id="tablename" GridPane.columnIndex="1">
-               <GridPane.margin>
-                  <Insets right="120.0" />
-               </GridPane.margin></TextField>
-            <TextField fx:id="packagepath" GridPane.columnIndex="1" GridPane.rowIndex="4">
-               <GridPane.margin>
-                  <Insets right="120.0" />
-               </GridPane.margin></TextField>
-            <HBox prefHeight="32.0" prefWidth="373.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#generateCode" text="submit">
-                     <HBox.margin>
-                        <Insets left="180.0" right="6.0" top="6.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button mnemonicParsing="false" text="reset">
-                     <HBox.margin>
-                        <Insets right="6.0" top="6.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-            </HBox>
-            <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="子表:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-            <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否记账:" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-            <ComboBox fx:id="isKeepAccount" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="subTableName" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets right="120.0" />
-               </GridPane.margin>
-            </TextField>
-            <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否维护流程:" GridPane.rowIndex="3" />
-            <ComboBox fx:id="isSafeFlow" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-         </children>
-      </GridPane>
+            <Button mnemonicParsing="false" onAction="#generateCode" text="submit">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></Button>
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="reset">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></Button>
+         </children></HBox>
    </children>
 </AnchorPane>

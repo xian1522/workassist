@@ -9,7 +9,7 @@ import com.joyin.ticm.accmn.kaconfig.service.KaConfigService;
 import com.joyin.ticm.accmn.kamn.kacomm.KaConstant;
 import com.joyin.ticm.accmn.kamn.model.SysKeepAccount;
 import com.joyin.ticm.accmn.kamn.service.KeepAccountService;
-import com.joyin.ticm.ka.sl.${className}KeepAccount;
+import com.joyin.ticm.ka.${packageName?substring(0, packageName?last_index_of("."))}.${className}KeepAccount;
 </#if>
 import com.joyin.ticm.common.util.CommonUtil;
 import com.joyin.ticm.bean.ResultData;

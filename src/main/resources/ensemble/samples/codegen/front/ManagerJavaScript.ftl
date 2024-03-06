@@ -12,7 +12,7 @@ function initComplete(){
     controlGridBtn();
 
     initOrgan();
-	view(${className}grid);
+	view(${className?uncap_first}grid);
 }
 
 /**
@@ -118,7 +118,7 @@ function init${className}Grid(){
             },{
                 text: Constant.deal,
                 click: function(){
-                    onDeal(${className}grid);
+                    onDeal(${className?uncap_first}grid);
                 },
                 iconClass: Constant.icon_deal
             }, {
@@ -159,13 +159,13 @@ function edit${className}(){
     }
   	openCustomWindow(
 		contextPath +'${packageName?replace(".","/")}/init${className}Edit.do?moduleid=' + moduleid + '&${className?uncap_first}.${pkname?lower_case}=' + rows[0].${pkname?lower_case}
-			+ '&${packageName?replace(".","/")}.taskId=' + rows[0].taskId,
+			+ '&${packageName?uncap_first}.taskId=' + rows[0].taskId,
 		Resource.moduleName+Constant.line+Constant.edit, 800, 580);
 }
 
 //删除或批量删除
 function delete${className}(){
-    var rows = ${className}grid.getSelectedRows();
+    var rows = ${className?uncap_first}grid.getSelectedRows();
     var rowsLength = rows.length;
     if (rowsLength == 0) {
         top.Dialog.alert(Constant.noselect);

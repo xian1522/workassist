@@ -18,10 +18,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,12 +36,28 @@ public class CodeGenController {
     @FXML
     private TextField subTableName;
     @FXML
+    private TextField cdTablename;
+    @FXML
+    private TextField subCdTablename;
+    @FXML
     private ComboBox isKeepAccount; //是否记账
     @FXML
     private ComboBox isSafeFlow; //是否维护流程
+    @FXML
+    private TabPane tabPane;
 
     @FXML
-    public void generateCode() {
+    public void generateCode(){
+        Tab selectedItem = tabPane.getSelectionModel().getSelectedItem();
+
+        if(selectedItem.getId().equals("dealTab")) {
+            generateDealCode();
+        }else if(selectedItem.getId().equals("countdrawTab")){
+            generateCountDrawCode();
+        }
+    }
+
+    public void generateDealCode() {
 
         String tablename = this.tablename.getText();
         if(tablename == null || tablename.trim().length() == 0) {
@@ -64,7 +77,7 @@ public class CodeGenController {
             processTableDataSub(subTable, root);
         }
         try {
-            List<Template> templateList = processTemplate();
+            List<Template> templateList = processTemplate("DEAL");
 
             OutputStream out = null;
 
@@ -131,7 +144,111 @@ public class CodeGenController {
         success.show();
     }
 
-    public List<Template> processTemplate() {
+    /**
+     * 生成计提模块代码
+     */
+    public void generateCountDrawCode() {
+
+        String tablename = this.cdTablename.getText();
+        if(tablename == null || tablename.trim().length() == 0) {
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setContentText("主表名不能为空!");
+            warning.showAndWait();
+            return;
+        }
+
+        String subTablename = this.subCdTablename.getText();
+        if(subTablename == null || subTablename.trim().length() == 0) {
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setContentText("子表名不能为空!");
+            warning.showAndWait();
+            return;
+        }
+
+        //设置默认值
+        isKeepAccount.setValue("是");
+        isSafeFlow.setValue("否");
+
+        Map root = new HashMap();
+
+        TableGen table = processDataBaseMeta(tablename);
+        processTableData(table, root);
+        //处理子表
+        if(StringUtils.isNotEmpty(subTablename)) {
+            TableGen subTable = processDataBaseMeta(subTablename);
+            processTableDataSub(subTable, root);
+        }
+        try {
+            List<Template> templateList = processTemplate("COUNTDRAW");
+
+            OutputStream out = null;
+
+            for (Template template: templateList) {
+
+                String generateFilePath = "D:\\freemarker/";
+
+                String templateName = template.getName();
+
+                String className = root.get("className").toString();
+                Object subClassName = root.get("subClassName");
+
+                if(templateName.indexOf("JavaScript") > 0 || templateName.indexOf("Jsp") > 0) {
+                    if(templateName.startsWith("Sub")) {
+                        className = StringUtils.uncapitalize(subClassName.toString());
+                    }else{
+                        className = StringUtils.uncapitalize(className);
+                    }
+                    generateFilePath += "front/";
+                }else {
+                    generateFilePath += "backward/";
+                }
+                if("Model.ftl".equals(templateName)) {
+                    generateFilePath += className + ".java";
+                }else if("SubModel.ftl".equals(templateName)){
+                    generateFilePath += subClassName + ".java";
+                }else if("Hibernate.ftl".equals(templateName)) {
+                    generateFilePath += className + ".hbm.xml";
+                }else if("SubHibernate.ftl".equals(templateName)) {
+                    generateFilePath += subClassName + ".hbm.xml";
+                }else if("Config.ftl".equals(templateName)){
+                    generateFilePath += className + ".xml";
+                }else if(templateName.indexOf("JavaScript") > 0){
+                    int endIndex = templateName.indexOf("JavaScript");
+                    generateFilePath += className + templateName.substring(0, endIndex) + ".js";
+                }else if(templateName.indexOf("Jsp") > 0){
+                    int endIndex = templateName.indexOf("Jsp");
+                    generateFilePath += className + templateName.substring(0, endIndex) + ".jsp";
+                }else {
+                    templateName = StringUtils.substringAfter(templateName,"CountDraw");
+                    generateFilePath += className + templateName.replace("ftl","java");
+                }
+
+
+                File generateFile = new File(generateFilePath);
+
+                out = FileUtils.openOutputStream(generateFile);
+
+                Writer writer = new OutputStreamWriter(out);
+
+                template.process(root, writer);
+
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);//缓冲
+                String s = "";
+                bufferedWriter.write(s);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+            }
+        } catch (IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+
+        Alert success = new Alert(Alert.AlertType.INFORMATION);
+        success.setContentText("模板数据生成成功");
+        success.show();
+    }
+
+
+    public List<Template> processTemplate(String templateType) {
 
         List<Template> templateList = new ArrayList<>();
 
@@ -148,52 +265,96 @@ public class CodeGenController {
             configuration.setDefaultEncoding("UTF-8");
             configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
-            Template actionTemplate = configuration.getTemplate("Action.ftl");
-            Template serviceTemplate = configuration.getTemplate("Service.ftl");
-            Template serviceImplTemplate = configuration.getTemplate("ServiceImpl.ftl");
-            Template daoTemplate = configuration.getTemplate("Dao.ftl");
-            Template daoimplTemplate = configuration.getTemplate("DaoImpl.ftl");
-            Template modelTemplate = configuration.getTemplate("Model.ftl");
-            Template hibenateTemplate = configuration.getTemplate("Hibernate.ftl");
-            Template configTemplate = configuration.getTemplate("Config.ftl");
-            Template keepAccountTemplate = configuration.getTemplate("KeepAccount.ftl");
+            if("DEAL".equals(templateType)) {
+                Template actionTemplate = configuration.getTemplate("Action.ftl");
+                Template serviceTemplate = configuration.getTemplate("Service.ftl");
+                Template serviceImplTemplate = configuration.getTemplate("ServiceImpl.ftl");
+                Template daoTemplate = configuration.getTemplate("Dao.ftl");
+                Template daoimplTemplate = configuration.getTemplate("DaoImpl.ftl");
+                Template modelTemplate = configuration.getTemplate("Model.ftl");
+                Template hibenateTemplate = configuration.getTemplate("Hibernate.ftl");
+                Template configTemplate = configuration.getTemplate("Config.ftl");
+                Template keepAccountTemplate = configuration.getTemplate("KeepAccount.ftl");
 
-            Template managerJsTemplate = configuration.getTemplate("ManagerJavaScript.ftl");
-            Template editJsTemplate = configuration.getTemplate("EditJavaScript.ftl");
-            Template managerJspTemplate = configuration.getTemplate("ManagerJsp.ftl");
-            Template baseTemplate = configuration.getTemplate("BaseJsp.ftl");
-            Template editTemplate = configuration.getTemplate("EditJsp.ftl");
-            Template remarkTemplate = configuration.getTemplate("remarkJsp.ftl");
-            Template userInfoTemplate = configuration.getTemplate("userInfoJsp.ftl");
+                Template managerJsTemplate = configuration.getTemplate("ManagerJavaScript.ftl");
+                Template editJsTemplate = configuration.getTemplate("EditJavaScript.ftl");
+                Template managerJspTemplate = configuration.getTemplate("ManagerJsp.ftl");
+                Template baseTemplate = configuration.getTemplate("BaseJsp.ftl");
+                Template editTemplate = configuration.getTemplate("EditJsp.ftl");
+                Template remarkTemplate = configuration.getTemplate("remarkJsp.ftl");
+                Template userInfoTemplate = configuration.getTemplate("userInfoJsp.ftl");
 
-            Template subModelTemplate = configuration.getTemplate("SubModel.ftl");
-            Template subHiberateTemplate = configuration.getTemplate("SubHibernate.ftl");
-            Template subJspTemplate = configuration.getTemplate("SubJsp.ftl");
+                Template subModelTemplate = configuration.getTemplate("SubModel.ftl");
+                Template subHiberateTemplate = configuration.getTemplate("SubHibernate.ftl");
+                Template subJspTemplate = configuration.getTemplate("SubJsp.ftl");
 
-            templateList.add(actionTemplate);
-            templateList.add(serviceTemplate);
-            templateList.add(serviceImplTemplate);
-            templateList.add(daoTemplate);
-            templateList.add(daoimplTemplate);
-            templateList.add(modelTemplate);
-            templateList.add(hibenateTemplate);
-            templateList.add(configTemplate);
-            if(isKeepAccount.getValue().equals("是")) {
+                templateList.add(actionTemplate);
+                templateList.add(serviceTemplate);
+                templateList.add(serviceImplTemplate);
+                templateList.add(daoTemplate);
+                templateList.add(daoimplTemplate);
+                templateList.add(modelTemplate);
+                templateList.add(hibenateTemplate);
+                templateList.add(configTemplate);
+                if (isKeepAccount.getValue().equals("是")) {
+                    templateList.add(keepAccountTemplate);
+                }
+                if (StringUtils.isNotEmpty(subTableName.getText())) {
+                    templateList.add(subModelTemplate);
+                    templateList.add(subHiberateTemplate);
+                    templateList.add(subJspTemplate);
+                }
+
+                templateList.add(managerJsTemplate);
+                templateList.add(editJsTemplate);
+                templateList.add(managerJspTemplate);
+                templateList.add(baseTemplate);
+                templateList.add(editTemplate);
+                templateList.add(remarkTemplate);
+                templateList.add(userInfoTemplate);
+            } else if("COUNTDRAW".equals(templateType)) {
+                Template countdrawEditTemplate = configuration.getTemplate("CountDrawEditJsp.ftl");
+                Template countdrawFindManagerTemplate = configuration.getTemplate("CountDrawFindManagerJsp.ftl");
+                Template countdrawFindManagerJsTemplate = configuration.getTemplate("CountDrawFindManagerJavaScript.ftl");
+                Template countdrawManagerTemplate = configuration.getTemplate("CountDrawManagerJsp.ftl");
+                Template countdrawManagerJsTemplate = configuration.getTemplate("CountDrawManagerJavaScript.ftl");
+                Template countdrawViewTemplate = configuration.getTemplate("CountDrawViewJsp.ftl");
+
+                templateList.add(countdrawEditTemplate);
+                templateList.add(countdrawFindManagerTemplate);
+                templateList.add(countdrawFindManagerJsTemplate);
+                templateList.add(countdrawManagerTemplate);
+                templateList.add(countdrawManagerJsTemplate);
+                templateList.add(countdrawViewTemplate);
+
+
+                Template modelTemplate = configuration.getTemplate("Model.ftl");
+                Template hibenateTemplate = configuration.getTemplate("Hibernate.ftl");
+                Template configTemplate = configuration.getTemplate("CountDrawConfig.ftl");
+                Template keepAccountTemplate = configuration.getTemplate("CountDrawKeepAccount.ftl");
+                Template subModelTemplate = configuration.getTemplate("SubModel.ftl");
+                Template subHiberateTemplate = configuration.getTemplate("SubHibernate.ftl");
+
+
+                Template actionTemplate = configuration.getTemplate("CountDrawAction.ftl");
+                Template serviceTemplate = configuration.getTemplate("CountDrawService.ftl");
+                Template serviceImplTemplate = configuration.getTemplate("CountDrawServiceImpl.ftl");
+                Template daoTemplate = configuration.getTemplate("CountDrawDao.ftl");
+                Template daoimplTemplate = configuration.getTemplate("CountDrawDaoImpl.ftl");
+
                 templateList.add(keepAccountTemplate);
-            }
-            if(StringUtils.isNotEmpty(subTableName.getText())){
                 templateList.add(subModelTemplate);
                 templateList.add(subHiberateTemplate);
-                templateList.add(subJspTemplate);
-            }
+                templateList.add(modelTemplate);
+                templateList.add(hibenateTemplate);
+                templateList.add(configTemplate);
 
-            templateList.add(managerJsTemplate);
-            templateList.add(editJsTemplate);
-            templateList.add(managerJspTemplate);
-            templateList.add(baseTemplate);
-            templateList.add(editTemplate);
-            templateList.add(remarkTemplate);
-            templateList.add(userInfoTemplate);
+                templateList.add(actionTemplate);
+                templateList.add(serviceTemplate);
+                templateList.add(serviceImplTemplate);
+                templateList.add(daoTemplate);
+                templateList.add(daoimplTemplate);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -228,6 +389,8 @@ public class CodeGenController {
                 importList.add("java.sql.Timestamp");
             }else if(jdbcType == Db2ColumnType.INTEGER.getJdbcType()) {
                 javaType = Db2ColumnType.INTEGER.getJavaType();
+            }else if(jdbcType == Db2ColumnType.BIGINT.getJdbcType()) {
+                javaType = Db2ColumnType.BIGINT.getJavaType();
             }
             column.setTypeName(javaType);
         }
@@ -276,6 +439,10 @@ public class CodeGenController {
         }
 
         root.put("subImportList", tableGen.getImportList());
+
+        HashSet<String> importList = (HashSet<String>)root.get("importList");
+        importList.add("java.util.List");
+
         root.put("subClassName", className);
     }
 
