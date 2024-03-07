@@ -19,6 +19,8 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,10 +47,20 @@ public class CodeGenController {
     private ComboBox isSafeFlow; //是否维护流程
     @FXML
     private TabPane tabPane;
+    @FXML
+    private Label fileDirectory;
 
     @FXML
     public void generateCode(){
         Tab selectedItem = tabPane.getSelectionModel().getSelectedItem();
+
+        String fileDirectoryText = fileDirectory.getText();
+        if(StringUtils.isEmpty(fileDirectoryText)) {
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setContentText("文件路径不能为空!");
+            warning.showAndWait();
+            return;
+        }
 
         if(selectedItem.getId().equals("dealTab")) {
             generateDealCode();
@@ -57,12 +69,49 @@ public class CodeGenController {
         }
     }
 
+    @FXML
+    public void openFileDialog() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        if(StringUtils.isNotEmpty(fileDirectory.getText())) {
+            directoryChooser.setInitialDirectory(new File(fileDirectory.getText()));
+        }
+        directoryChooser.setTitle("项目路径");
+        File file = directoryChooser.showDialog(null);
+        if(file != null) {
+            fileDirectory.setText(file.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    public void reset() {
+        fileDirectory.setText(null);
+        tablename.setText(null);
+        subTableName.setText(null);
+        cdTablename.setText(null);
+        subCdTablename.setText(null);
+        isKeepAccount.setValue(null);
+        isSafeFlow.setValue(null);
+    }
+
+
     public void generateDealCode() {
 
         String tablename = this.tablename.getText();
         if(tablename == null || tablename.trim().length() == 0) {
             Alert warning = new Alert(Alert.AlertType.WARNING);
-            warning.setContentText("表名不能为空!");
+            warning.setContentText("主表不能为空!");
+            warning.showAndWait();
+            return;
+        }
+        if(isKeepAccount.getValue() == null) {
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setContentText("是否记账不能为空!");
+            warning.showAndWait();
+            return;
+        }
+        if(isSafeFlow.getValue() == null) {
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setContentText("是否维护流程不能为空!");
             warning.showAndWait();
             return;
         }
@@ -83,7 +132,7 @@ public class CodeGenController {
 
             for (Template template: templateList) {
 
-                String generateFilePath = "D:\\freemarker/";
+                String generateFilePath = fileDirectory.getText() + "/";
 
                 String templateName = template.getName();
 
@@ -185,7 +234,7 @@ public class CodeGenController {
 
             for (Template template: templateList) {
 
-                String generateFilePath = "D:\\freemarker/";
+                String generateFilePath = fileDirectory.getText() + "/";
 
                 String templateName = template.getName();
 
@@ -362,6 +411,8 @@ public class CodeGenController {
     }
 
     public TableGen processDataBaseMeta(String tableName) {
+
+        tableName = StringUtils.upperCase(tableName);
 
         DataSource ds = DSFactory.get();
         Table table =  MetaUtil.getTableMeta(ds, tableName);
