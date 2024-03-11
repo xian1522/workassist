@@ -50,6 +50,8 @@ public class CodeGenController {
     @FXML
     private Label fileDirectory;
 
+    private final String BUSINESS_PATH = "Ticm_Business/src/main/java/com/joyin/ticm";
+
     @FXML
     public void generateCode(){
         Tab selectedItem = tabPane.getSelectionModel().getSelectedItem();
@@ -130,6 +132,9 @@ public class CodeGenController {
 
             OutputStream out = null;
 
+            String packageName = root.get("packageName").toString().replace(".", "/") ;
+
+
             for (Template template: templateList) {
 
                 String generateFilePath = fileDirectory.getText() + "/";
@@ -145,14 +150,12 @@ public class CodeGenController {
                     }else{
                         className = StringUtils.uncapitalize(className);
                     }
-                    generateFilePath += "front/";
-                }else {
-                    generateFilePath += "backward/";
                 }
+
                 if("Model.ftl".equals(templateName)) {
-                    generateFilePath += className + ".java";
+                    generateFilePath += BUSINESS_PATH + packageName + "/model/" + className + ".java";
                 }else if("SubModel.ftl".equals(templateName)){
-                    generateFilePath += subClassName + ".java";
+                    generateFilePath += BUSINESS_PATH + packageName + "/model/" + subClassName + ".java";
                 }else if("Hibernate.ftl".equals(templateName)) {
                     generateFilePath += className + ".hbm.xml";
                 }else if("SubHibernate.ftl".equals(templateName)) {
@@ -161,12 +164,28 @@ public class CodeGenController {
                     generateFilePath += className + ".xml";
                 }else if(templateName.indexOf("JavaScript") > 0){
                     int endIndex = templateName.indexOf("JavaScript");
-                    generateFilePath += className + templateName.substring(0, endIndex) + ".js";
+                    generateFilePath += "Ticm/WebRoot/javascript" + packageName + "/"
+                            +className + templateName.substring(0, endIndex) + ".js";
                 }else if(templateName.indexOf("Jsp") > 0){
                     int endIndex = templateName.indexOf("Jsp");
-                    generateFilePath += className + templateName.substring(0, endIndex) + ".jsp";
+                    generateFilePath += "Ticm/WebRoot/pages" + packageName + "/"
+                            +className + templateName.substring(0, endIndex) + ".jsp";
                 }else {
-                    generateFilePath += className + templateName.replace("ftl","java");
+                    if("Dao.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/dao/" + className + templateName.replace("ftl","java");
+                    }else if("DaoImpl.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/dao/impl/" + className + templateName.replace("ftl","java");
+                    }else if("Service.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/service/" + className + templateName.replace("ftl","java");
+                    }else if("ServiceImpl.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/service/impl/" + className + templateName.replace("ftl","java");
+                    }else if("Action.ftl".equals(templateName)) {
+                        generateFilePath += "Ticm/src/main/java/com/joyin/ticm"
+                                + packageName + "/action/" + className + templateName.replace("ftl","java");
+                    }else if("KeepAccount.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + "/ka/" + packageName.substring(1, packageName.lastIndexOf("/")) + "/"
+                                + className +templateName.replace("ftl","java");
+                    }
                 }
 
 
@@ -232,6 +251,8 @@ public class CodeGenController {
 
             OutputStream out = null;
 
+            String packageName = root.get("packageName").toString().replace(".", "/") ;
+
             for (Template template: templateList) {
 
                 String generateFilePath = fileDirectory.getText() + "/";
@@ -252,9 +273,9 @@ public class CodeGenController {
                     generateFilePath += "backward/";
                 }
                 if("Model.ftl".equals(templateName)) {
-                    generateFilePath += className + ".java";
+                    generateFilePath += BUSINESS_PATH + packageName + "/model/" + className + ".java";
                 }else if("SubModel.ftl".equals(templateName)){
-                    generateFilePath += subClassName + ".java";
+                    generateFilePath += BUSINESS_PATH + packageName + "/model/" + subClassName + ".java";
                 }else if("Hibernate.ftl".equals(templateName)) {
                     generateFilePath += className + ".hbm.xml";
                 }else if("SubHibernate.ftl".equals(templateName)) {
@@ -263,13 +284,30 @@ public class CodeGenController {
                     generateFilePath += className + ".xml";
                 }else if(templateName.indexOf("JavaScript") > 0){
                     int endIndex = templateName.indexOf("JavaScript");
-                    generateFilePath += className + templateName.substring(0, endIndex) + ".js";
+                    generateFilePath += "Ticm/WebRoot/javascript" + packageName + "/"
+                            +className + templateName.substring(0, endIndex) + ".js";
                 }else if(templateName.indexOf("Jsp") > 0){
                     int endIndex = templateName.indexOf("Jsp");
-                    generateFilePath += className + templateName.substring(0, endIndex) + ".jsp";
+                    generateFilePath += "Ticm/WebRoot/pages" + packageName + "/"
+                            +className + templateName.substring(0, endIndex) + ".jsp";
                 }else {
                     templateName = StringUtils.substringAfter(templateName,"CountDraw");
-                    generateFilePath += className + templateName.replace("ftl","java");
+
+                    if("Dao.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/dao/" + className +templateName.replace("ftl","java");
+                    }else if("DaoImpl.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/dao/impl/" + className + templateName.replace("ftl","java");
+                    }else if("Service.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/service/"+ className + templateName.replace("ftl","java");
+                    }else if("ServiceImpl.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + packageName + "/service/impl/"+ className + templateName.replace("ftl","java");
+                    }else if("Action.ftl".equals(templateName)) {
+                        generateFilePath += "Ticm/src/main/java/com/joyin/ticm"
+                                + packageName + "/action/" + className + templateName.replace("ftl","java");
+                    }else if("KeepAccount.ftl".equals(templateName)) {
+                        generateFilePath += BUSINESS_PATH + "/ka/" + packageName.substring(1, packageName.lastIndexOf("/")) + "/"
+                                + className +templateName.replace("ftl","java");
+                    }
                 }
 
 
@@ -328,6 +366,7 @@ public class CodeGenController {
                 Template managerJsTemplate = configuration.getTemplate("ManagerJavaScript.ftl");
                 Template editJsTemplate = configuration.getTemplate("EditJavaScript.ftl");
                 Template managerJspTemplate = configuration.getTemplate("ManagerJsp.ftl");
+                Template searchJspTemplate = configuration.getTemplate("SearchJsp.ftl");
                 Template baseTemplate = configuration.getTemplate("BaseJsp.ftl");
                 Template editTemplate = configuration.getTemplate("EditJsp.ftl");
                 Template remarkTemplate = configuration.getTemplate("remarkJsp.ftl");
@@ -361,6 +400,7 @@ public class CodeGenController {
                 templateList.add(editTemplate);
                 templateList.add(remarkTemplate);
                 templateList.add(userInfoTemplate);
+                templateList.add(searchJspTemplate);
             } else if("COUNTDRAW".equals(templateType)) {
                 Template countdrawEditTemplate = configuration.getTemplate("CountDrawEditJsp.ftl");
                 Template countdrawFindManagerTemplate = configuration.getTemplate("CountDrawFindManagerJsp.ftl");

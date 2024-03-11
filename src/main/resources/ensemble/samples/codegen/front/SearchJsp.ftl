@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@page import="com.joyin.ticm.common.constant.Constant"%>
 <!-- 模块编号 -->
-<input type="hidden" id="moduleid" name="moduleid" value="${moduleid }" />
+<input type="hidden" id="moduleid" name="moduleid" value="<s:property value="moduleid"/>" />
 <div class="boxContent" style="display:none">
     <table class="tableStyle" formMode="transparent" width="100%">
             <tr >
@@ -32,13 +32,13 @@
                     <s:text name="label.organ.no"></s:text><s:text name="label.colon"></s:text>
                 </td>
                 <td width="210px">
-                    <div class="suggestion"   url="${pageContext.request.contextPath}/util/getOrganListP.do" showList="true" inputWidth="130" autoCheck="false" id="suggestorgid" ></div>
+                    <div class="suggestion"   url="${r"${pageContext.request.contextPath}"}/util/getOrganListP.do" showList="true" inputWidth="130" autoCheck="false" id="suggestorgid" ></div>
                 </td>
                 <td width="80px" >
                     <s:text name="label.organ.name"></s:text><s:text name="label.colon"></s:text>
                 </td>
                 <td width="210px">
-                    <input type="text" id="orgname" name="${className?uncap_first}.orgname" disabled="disabled" style="width:130px;"  value="${${className?uncap_first}.orgname }" />
+                    <input type="text" id="orgname" name="${className?uncap_first}.orgname" disabled="disabled" style="width:130px;" />
                 </td>
                 <td width="80px" >
                  </td>
