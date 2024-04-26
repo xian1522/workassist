@@ -369,8 +369,8 @@ public class CodeGenController {
                 Template searchJspTemplate = configuration.getTemplate("SearchJsp.ftl");
                 Template baseTemplate = configuration.getTemplate("BaseJsp.ftl");
                 Template editTemplate = configuration.getTemplate("EditJsp.ftl");
-                Template remarkTemplate = configuration.getTemplate("remarkJsp.ftl");
-                Template userInfoTemplate = configuration.getTemplate("userInfoJsp.ftl");
+                Template remarkTemplate = configuration.getTemplate("RemarkJsp.ftl");
+                Template userInfoTemplate = configuration.getTemplate("UserInfoJsp.ftl");
 
                 Template subModelTemplate = configuration.getTemplate("SubModel.ftl");
                 Template subHiberateTemplate = configuration.getTemplate("SubHibernate.ftl");

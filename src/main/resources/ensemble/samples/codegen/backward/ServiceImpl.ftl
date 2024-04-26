@@ -38,10 +38,12 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	private FlowProcessService flowProcessService;
 	@Resource
 	private BaseDao baseDao;
+<#if isKeepAccount == "是">
 	@Resource
 	private KaConfigService kaConfigService;
 	@Resource
 	private KeepAccountService keepAccountService;
+</#if>
 
 	/**
 	 * 保存${table.comment!}
@@ -223,9 +225,9 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	/**
-	 * 根据流水号查询债券借贷到期数据
+	 * 根据流水号查询${className}数据
 	 * @param ${pkname?lower_case} 主键
-	 * @return ${className} 到期交易
+	 * @return ${className} 数据
 	 * @throws ServiceException
 	 */
 	@Override
@@ -234,7 +236,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		info(methodName, "param[${pkname?lower_case}]: " + ${pkname?lower_case});
 
 		try {
-			${className} ${className?uncap_first} = baseDao.findById(${className}.class, reqid);
+			${className} ${className?uncap_first} = baseDao.findById(${className}.class, ${pkname?lower_case});
 			return ${className?uncap_first};
 		}
 		catch (DaoException ex) {
@@ -253,7 +255,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	@Override
 	public ResultData delete${className}(List<${className}> ${className?uncap_first}List)
 			throws ServiceException {
-		String methodName = "deleteSlDeal";
+		String methodName = "delete${className}";
 		info(methodName, "param[${className?uncap_first}List]: " + ${className?uncap_first}List);
 
 		// 定义返回信息

@@ -78,9 +78,9 @@
 				</div>
 			</div>
 			<div class="con_area">
-				<%@include file="/pages${packageName?replace(".","/")}/comm/${className?uncap_first}Base.jsp"%>
-				<%@include file="/pages${packageName?replace(".","/")}/comm/remark.jsp"%>
-				<%@include file="/pages${packageName?replace(".","/")}/comm/userInfo.jsp"%>
+				<%@include file="/pages${packageName?replace(".","/")}/${className?uncap_first}Base.jsp"%>
+				<%@include file="/pages${packageName?replace(".","/")}/${className?uncap_first}Remark.jsp"%>
+				<%@include file="/pages${packageName?replace(".","/")}/${className?uncap_first}UserInfo.jsp"%>
 			</div>
 		</div>
   	</form>

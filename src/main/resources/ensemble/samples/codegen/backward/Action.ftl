@@ -88,7 +88,7 @@ public class ${className}Action extends ActionBase {
             // 获取流程信息
             flowState = getFlowStateByTaskId(taskId);
 
-            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.getReqid());
+            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 
             // 流程信息转换
             transferFlowInfo(${className?uncap_first}, flowState);
@@ -96,7 +96,7 @@ public class ${className}Action extends ActionBase {
             format${className}ForPage(${className?uncap_first});
 
         }catch (ServiceException e) {
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_UPDATE, e.getMessage(), e);
         }
         return SUCCESS;
@@ -106,11 +106,11 @@ public class ${className}Action extends ActionBase {
         String methodName = "init${className}View";
         info(methodName, "初始化${table.comment!}查看页面");
         try {
-            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.getReqid());
+            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.get${pkname?lower_case?cap_first}());
             format${className}ForPage(${className?uncap_first});
         }catch (ServiceException e) {
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_VIEW, e.getMessage(), e);
         }
         return SUCCESS;
@@ -138,7 +138,7 @@ public class ${className}Action extends ActionBase {
                 // 编辑
                 rstBiz = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, false);
                 // 记录日志
-                writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),
+                writeOpLog(${className?uncap_first}.get${pkname?lower_case?cap_first}(), ${className?uncap_first}.getOwnedModuleid(),
                 Constant.OperateType.STRING_UPDATE);
             } else {
                 ${className?uncap_first}.setEffectflag(Constant.EffectFlag.A);
@@ -147,7 +147,7 @@ public class ${className}Action extends ActionBase {
                 // 保存后的存放申请
                 ${className} ${className?uncap_first} = (${className}) rstBiz.getObject();
                 // 记录日志
-                writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),
+                writeOpLog(${className?uncap_first}.get${pkname?lower_case?cap_first}(), ${className?uncap_first}.getOwnedModuleid(),
                 Constant.OperateType.STRING_NEW);
             }
             if (rstBiz.isSuccess()) {
@@ -161,13 +161,13 @@ public class ${className}Action extends ActionBase {
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, e.getMessage());
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_UPDATE, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, MessageUtil
             .getMessage(MessageUtil.Message.OP_LOG_0002));
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_UPDATE, e.getMessage(), e);
         }
         return methodName;
@@ -193,14 +193,14 @@ public class ${className}Action extends ActionBase {
                 // 更新并提交
                 rstBiz = ${className?uncap_first}Service.updateAndSubmit(${className?uncap_first}, true);
                 // 记录日志
-                writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),
+                writeOpLog(${className?uncap_first}.get${pkname?lower_case?cap_first}(), ${className?uncap_first}.getOwnedModuleid(),
                 Constant.OperateType.STRING_UPDATEANDSUBMIT);
             } else {
                 ${className?uncap_first}.setEffectflag(Constant.EffectFlag.A);
                 // 保存并提交
                 rstBiz = ${className?uncap_first}Service.saveAndSubmit(${className?uncap_first}, true);
                 // 记录日志
-                writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),
+                writeOpLog(${className?uncap_first}.get${pkname?lower_case?cap_first}(), ${className?uncap_first}.getOwnedModuleid(),
                 Constant.OperateType.STRING_SUBMIT);
             }
 <#if isKeepAccount == "是">
@@ -240,14 +240,14 @@ public class ${className}Action extends ActionBase {
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, e.getMessage());
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_SUBMIT, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
             // 返回错误结果
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, MessageUtil
             .getMessage(MessageUtil.Message.OP_LOG_0002));
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_SUBMIT, e.getMessage(), e);
         }
         return methodName;
@@ -288,7 +288,7 @@ public class ${className}Action extends ActionBase {
 
             }
         } catch (Exception e) {
-            processExceptionIntoDB(methodName,${className?uncap_first}.getReqid(),Constant.OperateType.STRING_KEEPACCOUNT,e.getMessage(), e);
+            processExceptionIntoDB(methodName,${className?uncap_first}.get${pkname?lower_case?cap_first}(),Constant.OperateType.STRING_KEEPACCOUNT,e.getMessage(), e);
             results.put(RESPOND.RESULT, false);
             results.put(RESPOND.MESSAGE, e.getMessage());
         }
@@ -325,12 +325,12 @@ public class ${className}Action extends ActionBase {
         } catch (ServiceException e) {
             flowState.setField1(ERROR);
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_FLOW_FORWARD, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
             flowState.setField1(ERROR);
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_REJECT, e.getMessage(), e);
         }
         return url;
@@ -353,7 +353,7 @@ public class ${className}Action extends ActionBase {
             // 退回
             rstBiz = ${className?uncap_first}Service.rejectFlow(${className?uncap_first});
             // 记录日志
-            writeOpLog(${className?uncap_first}.getReqid(), ${className?uncap_first}.getOwnedModuleid(),Constant.OperateType.STRING_REJECT);
+            writeOpLog(${className?uncap_first}.get${pkname?lower_case?cap_first}(), ${className?uncap_first}.getOwnedModuleid(),Constant.OperateType.STRING_REJECT);
             if (rstBiz.isSuccess()) {
                 // 返回前台结果集
                 results.put(Constant.RESPOND.RESULT, true);
@@ -368,7 +368,7 @@ public class ${className}Action extends ActionBase {
             results.put(Constant.RESPOND.RESULT, false);
             results.put(Constant.RESPOND.MESSAGE, e.getMessage());
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_REJECT, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
             // 返回前台结果集
@@ -376,7 +376,7 @@ public class ${className}Action extends ActionBase {
             results.put(Constant.RESPOND.MESSAGE, MessageUtil
             .getMessage(MessageUtil.Message.OP_LOG_0002));
             // 异常处理，异常入库操作
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_REJECT, e.getMessage(), e);
         }
         return methodName;
@@ -412,7 +412,7 @@ public class ${className}Action extends ActionBase {
                 }
             } else {
                 rs = ${className?uncap_first}Service.find${className}OfPage(${className?uncap_first}, pager, optype, null);
-                flowResultData = getFlowStateByLinkIds(rs.getList(), "reqid");
+                flowResultData = getFlowStateByLinkIds(rs.getList(), "${pkname?lower_case}");
             }
             ${className?uncap_first}List = (List<${className}>) rs.getList();
             flowMap = CommonUtil.isNotEmpty(flowResultData)&& flowResultData.isSuccess() ? (Map<String, Object>) flowResultData.getMap() : new HashMap<String, Object>();
@@ -422,7 +422,7 @@ public class ${className}Action extends ActionBase {
                     ${className}Dto dto = new ${className}Dto();
                     BeanUtils.copyProperties(${className?uncap_first}Temp, dto);
                     // 流程信息赋值
-                    transferFlowInfo(dto, flowMap, "reqid");
+                    transferFlowInfo(dto, flowMap, "${pkname?lower_case}");
                     dtoList.add(dto);
                 }
             }
@@ -510,11 +510,11 @@ public class ${className}Action extends ActionBase {
         String methodName = "safe${className}";
         info(methodName, "初始化${table.comment!}维护页面.");
         try {
-            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.getReqid());
+            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.get${pkname?lower_case?cap_first}());
             format${className}ForPage(${className?uncap_first});
             ${className?uncap_first}.set${pkname?lower_case?cap_first}(null);
         }catch (ServiceException e) {
-            processExceptionIntoDB(methodName, ${className?uncap_first}.getReqid(),
+            processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_UPDATE, e.getMessage(), e);
         }
         return SUCCESS;
