@@ -44,6 +44,8 @@ public class CodeGenController {
     @FXML
     private ComboBox isKeepAccount; //是否记账
     @FXML
+    private ComboBox isFlow; //是否有流程
+    @FXML
     private ComboBox isSafeFlow; //是否维护流程
     @FXML
     private TabPane tabPane;
@@ -93,6 +95,7 @@ public class CodeGenController {
         subCdTablename.setText(null);
         isKeepAccount.setValue(null);
         isSafeFlow.setValue(null);
+        isFlow.setValue(null);
     }
 
 
@@ -343,8 +346,14 @@ public class CodeGenController {
 
         try {
 
-            FileTemplateLoader ftl1 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/backward"));
-            FileTemplateLoader ftl2 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/front"));
+            FileTemplateLoader ftl1 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/flow/backward"));
+            FileTemplateLoader ftl2 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/flow/front"));
+
+            if(isFlow.getValue().equals("否")) {
+                ftl1 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/noflow/backward"));
+                ftl2 = new FileTemplateLoader(new File("E:/Users/Administrator/workassist/target/classes/ensemble/samples/codegen/noflow/front"));
+            }
+
             TemplateLoader[] loaders = new TemplateLoader[] { ftl1, ftl2 };
             MultiTemplateLoader mtl = new MultiTemplateLoader(loaders);
             configuration.setTemplateLoader(mtl);
@@ -361,7 +370,7 @@ public class CodeGenController {
                 Template modelTemplate = configuration.getTemplate("Model.ftl");
                 Template hibenateTemplate = configuration.getTemplate("Hibernate.ftl");
                 Template configTemplate = configuration.getTemplate("Config.ftl");
-                Template keepAccountTemplate = configuration.getTemplate("KeepAccount.ftl");
+
 
                 Template managerJsTemplate = configuration.getTemplate("ManagerJavaScript.ftl");
                 Template editJsTemplate = configuration.getTemplate("EditJavaScript.ftl");
@@ -369,13 +378,25 @@ public class CodeGenController {
                 Template searchJspTemplate = configuration.getTemplate("SearchJsp.ftl");
                 Template baseTemplate = configuration.getTemplate("BaseJsp.ftl");
                 Template editTemplate = configuration.getTemplate("EditJsp.ftl");
-                Template remarkTemplate = configuration.getTemplate("RemarkJsp.ftl");
-                Template userInfoTemplate = configuration.getTemplate("UserInfoJsp.ftl");
 
-                Template subModelTemplate = configuration.getTemplate("SubModel.ftl");
-                Template subHiberateTemplate = configuration.getTemplate("SubHibernate.ftl");
-                Template subJspTemplate = configuration.getTemplate("SubJsp.ftl");
-
+                if(isFlow.getValue().equals("是")) {
+                    Template keepAccountTemplate = configuration.getTemplate("KeepAccount.ftl");
+                    Template remarkTemplate = configuration.getTemplate("RemarkJsp.ftl");
+                    Template userInfoTemplate = configuration.getTemplate("UserInfoJsp.ftl");
+                    Template subModelTemplate = configuration.getTemplate("SubModel.ftl");
+                    Template subHiberateTemplate = configuration.getTemplate("SubHibernate.ftl");
+                    Template subJspTemplate = configuration.getTemplate("SubJsp.ftl");
+                    if (isKeepAccount.getValue().equals("是")) {
+                        templateList.add(keepAccountTemplate);
+                    }
+                    if (StringUtils.isNotEmpty(subTableName.getText())) {
+                        templateList.add(subModelTemplate);
+                        templateList.add(subHiberateTemplate);
+                        templateList.add(subJspTemplate);
+                    }
+                    templateList.add(remarkTemplate);
+                    templateList.add(userInfoTemplate);
+                }
                 templateList.add(actionTemplate);
                 templateList.add(serviceTemplate);
                 templateList.add(serviceImplTemplate);
@@ -384,22 +405,12 @@ public class CodeGenController {
                 templateList.add(modelTemplate);
                 templateList.add(hibenateTemplate);
                 templateList.add(configTemplate);
-                if (isKeepAccount.getValue().equals("是")) {
-                    templateList.add(keepAccountTemplate);
-                }
-                if (StringUtils.isNotEmpty(subTableName.getText())) {
-                    templateList.add(subModelTemplate);
-                    templateList.add(subHiberateTemplate);
-                    templateList.add(subJspTemplate);
-                }
 
                 templateList.add(managerJsTemplate);
                 templateList.add(editJsTemplate);
                 templateList.add(managerJspTemplate);
                 templateList.add(baseTemplate);
                 templateList.add(editTemplate);
-                templateList.add(remarkTemplate);
-                templateList.add(userInfoTemplate);
                 templateList.add(searchJspTemplate);
             } else if("COUNTDRAW".equals(templateType)) {
                 Template countdrawEditTemplate = configuration.getTemplate("CountDrawEditJsp.ftl");
@@ -543,5 +554,9 @@ public class CodeGenController {
 
     public ComboBox getIsSafeFlow() {
         return isSafeFlow;
+    }
+
+    public ComboBox getIsFlow(){
+        return isFlow;
     }
 }

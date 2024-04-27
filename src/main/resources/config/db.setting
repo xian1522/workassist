@@ -4,10 +4,9 @@
 #username = SYJZHG
 #password = SYJZHG
 
-
 driver = com.ibm.db2.jcc.DB2Driver
-url = jdbc:db2://192.168.88.36:60006/TICMDB
-username = ticmusr
+url = jdbc:db2://192.168.70.242:60006/JXKK0824
+username = ticm
 password = joyin123
 
 

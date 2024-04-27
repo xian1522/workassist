@@ -38,6 +38,7 @@ public class CodegenApp extends Application {
     private void initComboBox(CodeGenController controller) {
         controller.getIsKeepAccount().getItems().addAll("是","否");
         controller.getIsSafeFlow().getItems().addAll("是","否");
+        controller.getIsFlow().getItems().addAll("是", "否");
     }
 
     public static void main(String[] args) {

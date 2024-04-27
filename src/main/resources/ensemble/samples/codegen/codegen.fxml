@@ -20,6 +20,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="15.0" prefWidth="135.0" text="主表:" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
@@ -36,8 +37,10 @@
                               <Insets right="120.0" />
                            </GridPane.margin>
                         </TextField>
-                        <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否维护流程:" GridPane.rowIndex="3" />
-                        <ComboBox fx:id="isSafeFlow" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否维护流程:" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="isSafeFlow" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label alignment="CENTER_RIGHT" prefWidth="135.0" text="是否有流程:" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="isFlow" prefWidth="150.0" promptText="请选择" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                      <padding>
                         <Insets top="20.0" />
