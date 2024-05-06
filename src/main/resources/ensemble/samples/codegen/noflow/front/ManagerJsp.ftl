@@ -5,7 +5,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <%@include file="/pages/common/meta.jsp"%>
-    <script src="${r"${pageContext.request.contextPath}"}/javascript/sysmn${packageName?replace(".","/")}/${className?uncap_first}Manager.js" type="text/javascript"></script>
+    <script src="${r"${pageContext.request.contextPath}"}/javascript${packageName?replace(".","/")}/${className?uncap_first}Manager.js" type="text/javascript"></script>
     <script type="text/javascript">
         var Resource={
             moduleName:"${table.comment!}",

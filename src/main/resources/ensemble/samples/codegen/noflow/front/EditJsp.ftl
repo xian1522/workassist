@@ -48,7 +48,7 @@
 				</div>
 			</div>
 			<div class="con_area">
-				<%@include file="/pages/sysmn${packageName?replace(".","/")}/${className?uncap_first}Base.jsp"%>
+				<%@include file="/pages${packageName?replace(".","/")}/${className?uncap_first}Base.jsp"%>
 			</div>
 		</div>
   	</form>

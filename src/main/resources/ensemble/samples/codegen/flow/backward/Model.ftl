@@ -4,6 +4,9 @@ package com.joyin.ticm${packageName}.model;
 import ${import};
 </#list>
 
+/**
+ *  ${table.comment!}
+ */
 import com.joyin.ticm.bean.DataForm;
 
 public class ${className} extends DataForm {

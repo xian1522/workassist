@@ -5,24 +5,24 @@
 	<package name="${className?uncap_first}" namespace="${packageName?replace(".","/")}" extends="abstract_struts">
 		<action name="init${className}Manager" class="${className?uncap_first}Action" method="init${className}Manager">
 			<result name="success">
-				/pages/sysmn${packageName?replace(".","/")}/${className?uncap_first}Manager.jsp
+				/pages${packageName?replace(".","/")}/${className?uncap_first}Manager.jsp
 			</result>
 		</action>
 
 		<action name="init${className}Add" class="${className?uncap_first}Action" method="init${className}Add">
 			<result name="success">
-				/pages/sysmn${packageName?replace(".","/")}/${className?uncap_first}Edit.jsp
+				/pages${packageName?replace(".","/")}/${className?uncap_first}Edit.jsp
 			</result>
 		</action>
 
 		<action name="init${className}Edit" class="${className?uncap_first}Action" method="init${className}Edit">
 			<result name="success">
-				/pages/sysmn${packageName?replace(".","/")}/${className?uncap_first}Edit.jsp
+				/pages${packageName?replace(".","/")}/${className?uncap_first}Edit.jsp
 			</result>
 		</action>
 		<action name="init${className}View" class="${className?uncap_first}Action" method="init${className}View">
 			<result name="success">
-				/pages/sysmn${packageName?replace(".","/")}/${className?uncap_first}View.jsp
+				/pages${packageName?replace(".","/")}/${className?uncap_first}View.jsp
 			</result>
 		</action>
 		<action name="*" class="${className?uncap_first}Action" method="{1}">
