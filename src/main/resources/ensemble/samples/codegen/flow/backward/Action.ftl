@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 
 import com.joyin.ticm.accmn.kamn.model.SysKeepAccount;
@@ -28,8 +29,16 @@ import com.joyin.ticm${packageName}.model.${className};
 import com.joyin.ticm${packageName}.service.${className}Service;
 
 import com.joyin.ticm.sysmn.user.model.UserInfo;
+import com.joyin.ticm.sysmn.report.ReportFactory;
 import com.joyin.ticm.web.action.ActionBase;
+<#if isNewFlow == "是">
+import com.joyintech.jupiter.workflow.commons.WorkFlowInput;
+import com.joyintech.jupiter.workflow.entity.FlowProcess;
+import com.joyintech.jupiter.workflow.exception.FlowException;
+import org.springframework.beans.BeanUtils;
+<#else>
 import com.joyin.ticm.workflow.model.FlowState;
+</#if>
 
 
 @Controller("${className?uncap_first}Action")
@@ -48,9 +57,11 @@ public class ${className}Action extends ActionBase {
     private UserInfo user = this.getSessionUserInfo();
     // 返回操作信息
     private Map<String, Object> results = new Hashtable<String, Object>();
-
+<#if isNewFlow == "是">
+<#else>
     // 流程状态
     private FlowState flowState;
+</#if>
 
     public String init${className}Manager() {
         String methodName = "init${className}Manager";
@@ -82,16 +93,18 @@ public class ${className}Action extends ActionBase {
     public String init${className}Edit() {
         String methodName = "init${className}Edit";
         info(methodName, "初始化${table.comment!}编辑页面.");
-        flowState = new FlowState();
+        // flowState = new FlowState();
         try {
+
+            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.get${pkname?lower_case?cap_first}());
+<#if isNewFlow == "是">
+<#else>
             String taskId = ${className?uncap_first}.getTaskId();
             // 获取流程信息
             flowState = getFlowStateByTaskId(taskId);
-
-            ${className?uncap_first} = ${className?uncap_first}Service.findById(${className?uncap_first}.get${pkname?lower_case?cap_first}());
-
             // 流程信息转换
             transferFlowInfo(${className?uncap_first}, flowState);
+</#if>
 
             format${className}ForPage(${className?uncap_first});
 
@@ -133,6 +146,10 @@ public class ${className}Action extends ActionBase {
         // 去掉实体中所有字段前后空格
         trimFieldForStr(${className?uncap_first});
         try {
+        <#if isNewFlow == "是">
+            // 流程提交下一步办理主体json字符串转list
+            setFlowDealSubjectList(${className?uncap_first});
+        </#if>
             format${className}ForSave(${className?uncap_first});
             if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
                 // 编辑
@@ -187,6 +204,10 @@ public class ${className}Action extends ActionBase {
         // 去掉实体中所有字段前后空格
         trimFieldForStr(${className?uncap_first});
         try {
+        <#if isNewFlow == "是">
+            // 流程提交下一步办理主体json字符串转list
+            setFlowDealSubjectList(${className?uncap_first});
+        </#if>
             ResultData rstBiz = new ResultData();
             ResultData rst = new ResultData();
             if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
@@ -302,33 +323,41 @@ public class ${className}Action extends ActionBase {
     public String ${className?uncap_first}Flow() {
         String methodName = "${className?uncap_first}Flow";
         info(methodName, "${table.comment!}流程操作页面跳转");
-
+    <#if isNewFlow == "是">
+        FlowProcess flowProcess = null;
+    <#else>
         flowState = new FlowState();
+    </#if>
         String url = "";
         try {
-        // 查询流程状态信息
-        flowState = getFlowStateByTaskId(taskId);
-        url = flowState.getField1();
-        ${className?uncap_first} = new ${className}();
-        // 查询业务数据
-        ${className?uncap_first} = ${className?uncap_first}Service.findById(flowState.getLinkid());
-        if(CommonUtil.isEmpty(${className?uncap_first}.getRtranuser())){
-            ${className?uncap_first}.setRtranuser(user.getUser().getUserid());
-            ${className?uncap_first}.setRtranname(user.getUser().getUsername());
-            ${className?uncap_first}.setOrgid(user.getUser().getOrgid());
-            ${className?uncap_first}.setOrgname(user.getOrgname());
-        }
-        // 流程信息转换
-        transferFlowInfo(${className?uncap_first}, flowState);
+            ${className?uncap_first} = new ${className}();
+            // 查询流程状态信息
+    <#if isNewFlow == "是">
+            WorkFlowInput workFlowInput = new WorkFlowInput(getSessionUserInfo().getUser().getUserid(), moduleid, linkid);
+            flowProcess = taskFlowControlService.getFlowProcessForDeal(workFlowInput, false);
+            url = flowProcess.getPageid();
+            ${className?uncap_first} = ${className?uncap_first}Service.findById(linkid);
+    <#else>
+            flowState = getFlowStateByTaskId(taskId);
+            url = flowState.getField1();
+            // 查询业务数据
+            ${className?uncap_first} = ${className?uncap_first}Service.findById(flowState.getLinkid());
+    </#if>
+            if(CommonUtil.isEmpty(${className?uncap_first}.getRtranuser())){
+                ${className?uncap_first}.setRtranuser(user.getUser().getUserid());
+                ${className?uncap_first}.setRtranname(user.getUser().getUsername());
+                ${className?uncap_first}.setOrgid(user.getUser().getOrgid());
+                ${className?uncap_first}.setOrgname(user.getOrgname());
+            }
+            // 流程信息转换
+            transferFlowInfo<#if isNewFlow == "是">New</#if>(${className?uncap_first},<#if isNewFlow == "是">flowProcess<#else>flowState</#if>);
 
-        format${className}ForPage(${className?uncap_first});
+            format${className}ForPage(${className?uncap_first});
         } catch (ServiceException e) {
-            flowState.setField1(ERROR);
             // 异常处理，异常入库操作
             processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_FLOW_FORWARD, e.getMessage(), e);
         } catch (HibernateOptimisticLockingFailureException e) {
-            flowState.setField1(ERROR);
             // 异常处理，异常入库操作
             processExceptionIntoDB(methodName, ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
             Constant.OperateType.STRING_REJECT, e.getMessage(), e);
@@ -399,30 +428,51 @@ public class ${className}Action extends ActionBase {
         }
         List<${className}> ${className?uncap_first}List = new ArrayList<${className}>();
         ResultData rs = new ResultData();
+
+    <#if isNewFlow == "是">
+        Map<String, FlowProcess> flowMap = new HashMap<String, FlowProcess>();
+        WorkFlowInput workFlowInput = new WorkFlowInput(getSessionUserInfo().getUser().getUserid(), moduleid);
+    <#else>
         ResultData flowResultData = new ResultData();
         Map<String, Object> flowMap = new HashMap<String, Object>();
+    </#if>
         List<${className}Dto> dtoList = new ArrayList<${className}Dto>();
 
         String opt = Constant.OperateType.STRING_VIEW_LIST;
         try {
             if (CommonUtil.isEmpty(optype) || optype.equals(Constant.OptionType.DEAL)) {
+        <#if isNewFlow == "是">
+                flowMap = taskFlowControlService.pageForDeal(workFlowInput);
+                List<?> linkids = new ArrayList<Object>(flowMap.keySet());
+                if (CommonUtil.isNotEmpty(linkids)) {
+                    rs = ${className?uncap_first}Service.find${className}OfPage(${className?uncap_first}, pager, optype,(List<String>) linkids);
+                }
+        <#else>
                 flowResultData = getActiveFlowState();
                 if (CommonUtil.isNotEmpty(flowResultData.getList())) {
                     rs = ${className?uncap_first}Service.find${className}OfPage(${className?uncap_first}, pager, optype,(List<String>) flowResultData.getList());
                 }
+        </#if>
             } else {
                 rs = ${className?uncap_first}Service.find${className}OfPage(${className?uncap_first}, pager, optype, null);
+        <#if isNewFlow == "是">
+                flowMap = taskFlowControlService.pageForQuery(workFlowInput,
+                                    (List<Object>) rs.getList(), "${pkname?lower_case}");
+        <#else>
                 flowResultData = getFlowStateByLinkIds(rs.getList(), "${pkname?lower_case}");
+        </#if>
             }
             ${className?uncap_first}List = (List<${className}>) rs.getList();
+        <#if isNewFlow == "是">
+        <#else>
             flowMap = CommonUtil.isNotEmpty(flowResultData)&& flowResultData.isSuccess() ? (Map<String, Object>) flowResultData.getMap() : new HashMap<String, Object>();
-
+        </#if>
             if (CommonUtil.isNotEmpty(${className?uncap_first}List)) {
                 for (${className} ${className?uncap_first}Temp : ${className?uncap_first}List) {
                     ${className}Dto dto = new ${className}Dto();
                     BeanUtils.copyProperties(${className?uncap_first}Temp, dto);
                     // 流程信息赋值
-                    transferFlowInfo(dto, flowMap, "${pkname?lower_case}");
+                    transferFlowInfo<#if isNewFlow == "是">New</#if>(dto, flowMap, "${pkname?lower_case}");
                     dtoList.add(dto);
                 }
             }
@@ -448,6 +498,9 @@ public class ${className}Action extends ActionBase {
 
         List<${className}> ${className?uncap_first}List = new ArrayList<${className}>();
         String strIds = request.getParameter("ids");
+    <#if isNewFlow == "是">
+        String moduleid = request.getParameter("moduleid");
+    </#if>
         try {
             if (CommonUtil.isNotEmpty(strIds)) {
                 String[] ids = strIds.split(",");
@@ -461,6 +514,10 @@ public class ${className}Action extends ActionBase {
                             ${className?uncap_first}.setLoginUserid(user.getUser().getUserid());
                             ${className?uncap_first}.setLstmntuser(user.getUser().getUserid());
                             ${className?uncap_first}.setEffectflag(Constant.EffectFlag.D);
+                        <#if isNewFlow == "是">
+                            // 设置：模块id
+                            ${className?uncap_first}.setOwnedModuleid(moduleid);
+                        </#if>
                             ${className?uncap_first}List.add(${className?uncap_first});
                         }
                     }
@@ -629,10 +686,10 @@ public class ${className}Action extends ActionBase {
         try {
             List<${subClassName}> ${subClassName?uncap_first}List
                     = ${className?uncap_first}Service.find${subClassName}List(${className?uncap_first});
-            for(BillDetail detail : billDetailList){
+            for(${subClassName} ${subClassName?uncap_first} : ${subClassName?uncap_first}List){
 
             }
-            results.put("rows", dtoList);
+            results.put("rows", ${subClassName?uncap_first}List);
         } catch (ServiceException e) {
             processException(methodName, e.getMessage(), e);
         }

@@ -5,7 +5,7 @@
 		<legend><s:text name="dc.label.deal.applyusermsg"/></legend>
 		<table class="tableStyle" formMode="transparent">
 			<tr>
-				<td width="10%" >
+				<td width="15%" >
 					<s:text name="label.organ.no"/><s:text name="label.colon"/><!--机构号-->
 				</td>
 				<td width="35%" >

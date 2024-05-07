@@ -103,7 +103,7 @@ function init${subClassName}View(){
   	columns = columns.concat(gridHide);
 	${subClassName?lower_case}Grid = $("#${subClassName?uncap_first}Grid").quiGrid({
       columns: columns,
-      data: ${subClassName?lower_case}grid_data,,
+      data: ${subClassName?lower_case}grid_data,
       checkbox:false,
 	  height:'200',
 	  wigth:'100%',

@@ -51,15 +51,15 @@ function init${className}Grid(){
 <#list table.columns as column>
     <#if column.comment??>
         <#if column.typeName='BigDecimal'>
-            { display: '${column.comment!}', name: '${column.name}', align: 'right', width: 120,
-                render: function (rowdata, rowindex, value, column){
-                    if( value != null){
-                        return formatRound(value,<#if column.size==26>2<#elseif column.size==18>4</#if>);
-                    }
+        {display: '${column.comment!}', name: '${column.name}', align: 'right', width: 120,
+            render: function (rowdata, rowindex, value, column){
+                if( value != null){
+                    return formatRound(value,<#if column.size==26>2<#elseif column.size==18>4</#if>);
                 }
-            },
+            }
+        },
         <#else>
-            { display: '${column.comment!}', name: '${column.name}', align: <#if column.typeName= 'Date'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
+            { display: '<#if column.comment?index_of("字典") gt 0 >${column.comment?substring(0,column.comment?index_of("[") - 1)}<#else>${column.comment!}</#if>', name: '${column.name}', align: <#if column.typeName= 'Date'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
         </#if>
     </#if>
 </#list>
@@ -118,7 +118,7 @@ function init${className}Grid(){
             },{
                 text: Constant.deal,
                 click: function(){
-                    onDeal(${className?uncap_first}grid);
+                    onDeal<#if isNewFlow == "是">New</#if>(${className?uncap_first}grid);
                 },
                 iconClass: Constant.icon_deal
             }, {
@@ -147,7 +147,11 @@ function add${className}(){
 //查看流程
 function viewFlow(){
     var rows = ${className?uncap_first}grid.getSelectedRows();
+<#if isNewFlow == "是">
+    onViewFlowNew(rows[0].linkid,rows[0].ownedModulename);
+<#else>
     onViewFlow(rows[0].jbpmProcessid, rows[0].ownedModulename);
+</#if>
 }
 
 //编辑    
@@ -157,6 +161,13 @@ function edit${className}(){
         top.Dialog.alert(Constant.noselect);
         return;
     }
+<#if isNewFlow == "是">
+    // 流程序号：是否第一步
+    if (1 != rows[0].curTask) {
+        top.Dialog.alert(Constant.workflowedit);
+        return;
+    }
+</#if>
   	openCustomWindow(
 		contextPath +'${packageName?replace(".","/")}/init${className}Edit.do?moduleid=' + moduleid + '&${className?uncap_first}.${pkname?lower_case}=' + rows[0].${pkname?lower_case}
 			+ '&${packageName?uncap_first}.taskId=' + rows[0].taskId,
@@ -171,6 +182,17 @@ function delete${className}(){
         top.Dialog.alert(Constant.noselect);
         return;
     }
+<#if isNewFlow == "是">
+    // 流程序号：是否第一步
+    var selectedRowsLength = rows.length;
+    for (var i = 0; i < selectedRowsLength; i++) {
+        if (1 != rows[i].curTask) {
+            top.Dialog.alert(Constant.workflowdelete);
+            return;;
+        }
+    }
+</#if>
+
     top.Dialog.confirm(Constant.deletzMsg, function(){
         $.post(contextPath +"${packageName?replace(".","/")}/delete${className}.do?moduleid="+moduleid, getSelectId(${className?uncap_first}grid), function(data){
             if (data.res) {
@@ -190,6 +212,13 @@ function safe${className}(){
         top.Dialog.alert(Constant.noselect);
         return;
     }
+<#if isNewFlow == "是">
+    if ('5' != rows[0].flowFlag) {
+        top.Dialog.alert(Constant.workflowcancel);
+        return;
+    }
+</#if>
+
     $.post(contextPath +"${packageName?replace(".","/")}/check${className}.do", {
         "${className?uncap_first}.planid": rows[0].planid,
         "${className?uncap_first}.orgid": rows[0].orgid,
@@ -275,12 +304,15 @@ function onGridUnSelectRow(){
 }
 
 function controlGridBtn(){
+<#if isNewFlow == "是">
+<#else>
     var obj = {
-        "isFlow": true,
-        "quigrid": ${className?uncap_first}grid,
-        "isCustom": true
+    "isFlow": true,
+    "quigrid": ${className?uncap_first}grid,
+    "isCustom": true
     }
     $.getSelectRows(obj);
+</#if>
 }
 
 function onAfterShowData(data){

@@ -9,7 +9,7 @@ import com.joyin.ticm.accmn.kaconfig.service.KaConfigService;
 import com.joyin.ticm.accmn.kamn.kacomm.KaConstant;
 import com.joyin.ticm.accmn.kamn.model.SysKeepAccount;
 import com.joyin.ticm.accmn.kamn.service.KeepAccountService;
-import com.joyin.ticm.ka.${packageName?substring(0, packageName?last_index_of("."))}.${className}KeepAccount;
+import com.joyin.ticm.ka${packageName?substring(0, packageName?last_index_of("."))}.${className}KeepAccount;
 </#if>
 import com.joyin.ticm.common.util.CommonUtil;
 import com.joyin.ticm.bean.ResultData;
@@ -24,7 +24,18 @@ import com.joyin.ticm${packageName}.dao.${className}Dao;
 import com.joyin.ticm${packageName}.model.${className};
 import com.joyin.ticm${packageName}.service.${className}Service;
 import com.joyin.ticm.sysmn.user.model.UserInfo;
+<#if isNewFlow == "是">
+import com.joyintech.jupiter.workflow.commons.WorkFlowInput;
+import com.joyintech.jupiter.workflow.entity.FlowProcess;
+import com.joyin.ticm.common.util.ConvertUtils;
+<#else>
 import com.joyin.ticm.workflow.service.FlowProcessService;
+</#if>
+<#if subTable??>
+import com.joyin.ticm${packageName}.model.${subClassName};
+import java.util.HashMap;
+import java.util.Map;
+</#if>
 
 
 /**
@@ -34,8 +45,11 @@ import com.joyin.ticm.workflow.service.FlowProcessService;
 public class ${className}ServiceImpl extends ServiceBase implements ${className}Service {
 	@Resource
 	private ${className}Dao ${className?uncap_first}Dao;
+<#if isNewFlow == "是">
+<#else>
 	@Resource
 	private FlowProcessService flowProcessService;
+</#if>
 	@Resource
 	private BaseDao baseDao;
 <#if isKeepAccount == "是">
@@ -69,31 +83,48 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}
 		${className?uncap_first}.setLinkid(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 
+	<#if isNewFlow == "是">
+		WorkFlowInput workFlowInput = new WorkFlowInput(${className?uncap_first}.getLoginUserid(),${className?uncap_first}.getOwnedModuleid(), ${className?uncap_first}.get${pkname?lower_case?cap_first}(),
+		${className?uncap_first}.getLoginOrgid(), ConvertUtils.beanToMap(${className?uncap_first}));
+		// 设置：审批意见
+		if (CommonUtil.isNotEmpty(${className?uncap_first}.getFlowRemark())) {
+			workFlowInput.setDealmesg(${className?uncap_first}.getFlowRemark());
+		}
+	</#if>
+
 		// 流程返回结果
 		ResultData rstFlow = new ResultData();
 		// 保存数据
 		try {
 			if (isSubmit) {
 				// 新建并提交流程
+<#if isNewFlow == "是">
+				taskFlowControlService.submit(workFlowInput);
+<#else>
 				rstFlow = flowProcessService.startProcessTask(
 						Constant.FlowKey.SLDUEFLOW, null, ${className?uncap_first});
 				if (rstFlow.isSuccess() == false) {
 					return rstFlow;
 				}
+</#if>
 			}else {
 				// 新建流程
+<#if isNewFlow == "是">
+				taskFlowControlService.save(workFlowInput);
+<#else>
 				rstFlow = flowProcessService.startByKey(
 						Constant.FlowKey.SLDUEFLOW, null, ${className?uncap_first});
 				if (rstFlow.isSuccess() == false) {
 					return rstFlow;
 				}
+</#if>
 			}
 			baseDao.saveOrUpdate(${className?uncap_first});
 
 <#if subTable??>
 			delete${subClassName}By${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 			for (${subClassName} ${subClassName?uncap_first} : ${className?uncap_first}.get${subClassName}List()) {
-			${subClassName?uncap_first}.set${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
+				${subClassName?uncap_first}.set${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 				baseDao.save(${subClassName?uncap_first});
 			}
 </#if>
@@ -108,6 +139,11 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		catch (ServiceException ex) {
 			throw processException(methodName, ex.getMessage(), ex);
 		}
+<#if isNewFlow == "是">
+		catch (Exception ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}
+</#if>
 		return rst;
 	}
 	
@@ -132,12 +168,38 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		ResultData rstFlow = new ResultData();
 		// 更新数据
 		try {
+<#if isNewFlow == "是">
+			WorkFlowInput workFlowInput = new WorkFlowInput(${className?uncap_first}.getLoginUserid(),${className?uncap_first}.getOwnedModuleid(),
+				${className?uncap_first}.get${pkname?lower_case?cap_first}(), ${className?uncap_first}.getNextNodeId());
+			// 设置办理主体
+			if (CommonUtil.isNotEmpty(${className?uncap_first}.getDealSubjects())) {
+				workFlowInput.setDealSubjects(${className?uncap_first}.getDealSubjects());
+			}
+			// 设置：审批意见
+			if (CommonUtil.isNotEmpty(${className?uncap_first}.getFlowRemark())) {
+				workFlowInput.setDealmesg(${className?uncap_first}.getFlowRemark());
+			}
+			// 设置：场景参数
+			workFlowInput.putVariables("$" + ${className?uncap_first}.getOwnedModuleid(),
+			ConvertUtils.beanToMap(${className?uncap_first}));
+
+			FlowProcess flowProcess = null;
+</#if>
 			if (isSubmit) {
 				// 提交流程
+<#if isNewFlow == "是">
+			flowProcess = taskFlowControlService.agree(workFlowInput);
+<#else>
 				rstFlow = flowProcessService.complateTask(null, ${className?uncap_first});
+</#if>
+
 			}else {
+<#if isNewFlow == "是">
+			flowProcess	= taskFlowControlService.save(workFlowInput);
+<#else>
 				// 更新流程名称
 				rstFlow = flowProcessService.updateFlowStateName(${className?uncap_first});
+</#if>
 			}
 			// 流程执行后状态
 			int flowRstStatus = FlowStateType.NOT_OVER;
@@ -146,7 +208,11 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 				flowRstStatus = rstFlow.getResultStatus();
 			}
 			// 流程结束
+<#if isNewFlow == "是">
+			if (flowProcess.over()) {
+<#else>
 			if (flowRstStatus == FlowStateType.FLOW_OVER) {
+</#if>
 				${className?uncap_first}.setEffectflag(Constant.EffectFlag.E);
 <#if isSafeFlow == "是">
 			if(CommonUtil.isNotEmpty(${className?uncap_first}.getSrcid()) {
@@ -268,13 +334,19 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}
 		try {
 			for (${className} ${className?uncap_first} : ${className?uncap_first}List) {
+	<#if isNewFlow == "是">
+				WorkFlowInput workFlowInput = new WorkFlowInput(${className?uncap_first}.getLoginUserid(),
+				${className?uncap_first}.getOwnedModuleid(), ${className?uncap_first}.get${pkname?lower_case?cap_first}());
+				taskFlowControlService.delete(workFlowInput);
+	<#else>
+
 				// 调用删除流程
 				ResultData rstFlow = flowProcessService
 						.deleteProcessInstance(${className?uncap_first});
 				if (rstFlow.isSuccess() == false) {
 					return rstFlow;
 				}
-
+	</#if>
 				baseDao.saveOrUpdate(${className?uncap_first});
 				rtData.setSuccess(true);
 			}
@@ -282,9 +354,15 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		catch (DaoException ex) {
 			throw processException(methodName, "删除${table.comment!}错误", ex);
 		}
+	<#if isNewFlow == "是">
+		catch (Exception ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}
+	<#else>
 		catch (ServiceException ex) {
 			throw processException(methodName, ex.getMessage(), ex);
 		}
+	</#if>
 
 		return rtData;
 	}
@@ -303,12 +381,27 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		ResultData rtData = new ResultData();
 		// 更新数据
 		try {
+	<#if isNewFlow == "是">
+			WorkFlowInput workFlowInput = new WorkFlowInput(${className?uncap_first}.getLoginUserid(),
+		${className?uncap_first}.getOwnedModuleid(), ${className?uncap_first}.get${pkname?lower_case?cap_first}(), ${className?uncap_first}.getNextNodeId());
+			// 设置：审批意见
+			if (CommonUtil.isNotEmpty(${className?uncap_first}.getFlowRemark())) {
+				workFlowInput.setDealmesg(${className?uncap_first}.getFlowRemark());
+			}
+			// 设置：场景参数
+			workFlowInput.putVariables("$" + ${className?uncap_first}.getOwnedModuleid(),
+			ConvertUtils.beanToMap(${className?uncap_first}));
+
+			// 流程退回
+			taskFlowControlService.reject(workFlowInput);
+	<#else>
 			// 流程退回
 			ResultData rstFlow = flowProcessService.reject(${className?uncap_first});
-		if (rstFlow.isSuccess() == false) {
-			return rstFlow;
-		}
-		baseDao.saveOrUpdate(${className?uncap_first});
+			if (rstFlow.isSuccess() == false) {
+				return rstFlow;
+			}
+	</#if>
+			baseDao.saveOrUpdate(${className?uncap_first});
 			// 成功
 			rtData.setSuccess(true);
 		}
@@ -434,7 +527,7 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		baseDao.executeHql(hql, paramMap, null);
 	}
 
-	public find${subClassName}List(${className} ${className?uncap_first}) throws ServiceException {
+	public List<${subClassName}> find${subClassName}List(${className} ${className?uncap_first}) throws ServiceException {
 		String methodName = "find${className}A";
 		List<${subClassName}> ${subClassName?uncap_first}List = new ArrayList<${subClassName}>();
 		// 参数定义
@@ -493,15 +586,38 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 			if(CommonUtil.isNotEmpty(list) && list.size()>1){
 				throw new ServiceException(ServiceException.DATA_HAS_BEEN_EXIST, "流水号["+list.get(0).${pkname?lower_case?cap_first}()+"]正在维护此记录");
 			}
+		<#if isNewFlow == "是">
+			// 原业务编号数据
+			Long oldSeqno = ${className?uncap_first}.get${pkname?lower_case?cap_first}();
+		</#if>
 			baseDao.save(${className?uncap_first});
 
 			${className?uncap_first}.setLinkid(${className?uncap_first}.get${pkname?lower_case?cap_first}() + "");
+		<#if isNewFlow == "是">
+			WorkFlowInput workFlowInput = new WorkFlowInput(${className?uncap_first}.getLoginUserid(),
+			${className?uncap_first}.getOwnedModuleid(), ${className?uncap_first}.getLinkid(),
+			${className?uncap_first}.getLoginOrgid(), null);
+			// 设置：原业务编号
+			workFlowInput.setObusinesskey(oldSeqno + "");
+			// 设置：审批意见
+			if (CommonUtil.isNotEmpty(${className?uncap_first}.getFlowRemark())) {
+				workFlowInput.setDealmesg(${className?uncap_first}.getFlowRemark());
+			}
+		</#if>
 			if (isSubmit) {
+		<#if isNewFlow == "是">
+				taskFlowControlService.submit(workFlowInput);
+		<#else>
 				// 新建维护流程并提交流程
 				rst = flowProcessService.startModifyProcessTask(Constant.FlowKey.FLOW, null, ${className?uncap_first});
+		</#if>
 			}else {
+		<#if isNewFlow == "是">
+				taskFlowControlService.save(workFlowInput);
+		<#else>
 				// 新建维护流程实例
 				rst = flowProcessService.startModifyByKey(Constant.FlowKey.FLOW, null,${className?uncap_first});
+		</#if>
 			}
 			if (rst.isSuccess() == false) {
 				return rst;
@@ -511,6 +627,11 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 		}catch (ServiceException ex) {
 			throw processException(methodName, ex.getMessage(), ex);
 		}
+<#if isNewFlow == "是">
+		catch (Exception ex) {
+			throw processException(methodName, ex.getMessage(), ex);
+		}
+</#if>
 		rst.setObject(${className?uncap_first});
 		rst.setSuccess(true);
 		return rst;

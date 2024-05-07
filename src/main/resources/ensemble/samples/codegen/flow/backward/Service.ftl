@@ -8,6 +8,9 @@ import com.joyin.ticm.page.Pager;
 import com.joyin.ticm.service.ServiceException;
 import com.joyin.ticm${packageName}.model.${className};
 import com.joyin.ticm.sysmn.user.model.UserInfo;
+<#if subTable??>
+import com.joyin.ticm${packageName}.model.${subClassName};
+</#if>
 
 /**
 *
@@ -82,7 +85,8 @@ public interface ${className}Service {
     public List<${className}> find${className}A(${className} ${className?uncap_first}) throws ServiceException;
     public ResultData saveSafeAndSubmit(${className} ${className?uncap_first}, boolean isSubmit) throws ServiceException;
 </#if>
+
 <#if subTable??>
-    public find${subClassName}List(${className} ${className?uncap_first}) throws ServiceException;
+    public List<${subClassName}> find${subClassName}List(${className} ${className?uncap_first}) throws ServiceException;
 </#if>
 }

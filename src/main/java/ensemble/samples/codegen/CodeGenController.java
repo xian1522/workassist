@@ -48,9 +48,12 @@ public class CodeGenController {
     @FXML
     private ComboBox isSafeFlow; //是否维护流程
     @FXML
+    private ComboBox isNewFlow; //是否新版流程
+    @FXML
     private TabPane tabPane;
     @FXML
     private Label fileDirectory;
+
 
     private final String BUSINESS_PATH = "Ticm_Business/src/main/java/com/joyin/ticm";
 
@@ -96,6 +99,7 @@ public class CodeGenController {
         isKeepAccount.setValue(null);
         isSafeFlow.setValue(null);
         isFlow.setValue(null);
+        isNewFlow.setValue(null);
     }
 
 
@@ -483,12 +487,21 @@ public class CodeGenController {
             }else if(jdbcType == Db2ColumnType.DATE.getJdbcType()) {
                 javaType = Db2ColumnType.DATE.getJavaType();
                 importList.add("java.util.Date");
-            }else if(jdbcType == Db2ColumnType.DECIMAL.getJdbcType()) {
-                javaType = Db2ColumnType.DECIMAL.getJavaType();
-                importList.add("java.math.BigDecimal");
+            }else if(jdbcType == Db2ColumnType.DECIMAL.getJdbcType() || jdbcType == OracleColumnType.DECIMAL.getJdbcType()) {
+                if(column.getSize() == 19L) {
+                    javaType = Db2ColumnType.BIGINT.getJavaType();
+                }else {
+                    javaType = Db2ColumnType.DECIMAL.getJavaType();
+                    importList.add("java.math.BigDecimal");
+                }
             }else if(jdbcType == Db2ColumnType.TIMESTAPME.getJdbcType()) {
-                javaType = Db2ColumnType.TIMESTAPME.getJavaType();
-                importList.add("java.sql.Timestamp");
+                if(column.getTypeName().equals("DATE")) {
+                    javaType = Db2ColumnType.DATE.getJavaType();
+                    importList.add("java.util.Date");
+                }else {
+                    javaType = Db2ColumnType.TIMESTAPME.getJavaType();
+                    importList.add("java.sql.Timestamp");
+                }
             }else if(jdbcType == Db2ColumnType.INTEGER.getJdbcType()) {
                 javaType = Db2ColumnType.INTEGER.getJavaType();
             }else if(jdbcType == Db2ColumnType.BIGINT.getJdbcType()) {
@@ -524,6 +537,7 @@ public class CodeGenController {
 
         root.put("isKeepAccount", isKeepAccount.getValue());
         root.put("isSafeFlow", isSafeFlow.getValue());
+        root.put("isNewFlow", isNewFlow.getValue());
     }
 
     private void processTableDataSub(TableGen tableGen, Map root) {
@@ -558,5 +572,9 @@ public class CodeGenController {
 
     public ComboBox getIsFlow(){
         return isFlow;
+    }
+
+    public ComboBox getIsNewFlow() {
+        return isNewFlow;
     }
 }

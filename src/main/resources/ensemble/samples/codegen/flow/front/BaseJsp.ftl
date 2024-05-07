@@ -22,7 +22,11 @@
 			<#if column.comment??>
 				<tr>
 					<td width="15%">
+						<#if column.comment?index_of("字典") gt 0 >
+						${column.comment?substring(0,column.comment?index_of("[") - 1)}<s:text name="label.colon"/>
+						<#else>
 						${column.comment}<s:text name="label.colon"/>
+						</#if>
 					</td>
 					<td width="35%">
 						<#if column.comment?index_of("字典") gt 0 >

@@ -19,7 +19,7 @@
             <div class="panelname"><s:text name="button.search"></s:text></div>
             <div class="view" title="<s:text name="button.search.advance"></s:text>"></div>
     </div>
-    <%@include file="comm/${className?uncap_first}Search.jsp" %>
+    <%@include file="${className?uncap_first}Search.jsp" %>
     </div>
 </form>
 <div id="scrollContent">

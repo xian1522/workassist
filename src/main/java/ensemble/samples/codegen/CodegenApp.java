@@ -39,6 +39,7 @@ public class CodegenApp extends Application {
         controller.getIsKeepAccount().getItems().addAll("是","否");
         controller.getIsSafeFlow().getItems().addAll("是","否");
         controller.getIsFlow().getItems().addAll("是", "否");
+        controller.getIsNewFlow().getItems().addAll("是", "否");
     }
 
     public static void main(String[] args) {
