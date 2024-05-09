@@ -262,10 +262,10 @@ function searchHandler(){
 
 function resetHandler(){
     //表单常规元素还原
-    var organid = $("#loginorgid").val();
     $("#searchForm")[0].reset();
     //自动提示框还原
-    $("#searchForm").find("#suggestorgid>input:eq(0)").val(organid);
+    $("#searchForm").find("#suggestorgid>input:eq(0)").val(JOYIN.sysinfo.orgid);
+    $("#orgname").val(JOYIN.sysinfo.orgname);
     //下拉框还原
     $("#searchForm").find("select").render();
     searchHandler();

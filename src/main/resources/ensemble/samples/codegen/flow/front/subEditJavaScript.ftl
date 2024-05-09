@@ -9,9 +9,9 @@ function init${subClassName}GridData(${pkname?lower_case}, type){
 $.post(contextPath+'${packageName?replace(".","/")}/find${subClassName}List.do' ,
 	{"${className?uncap_first}.${pkname?lower_case}": ${pkname?lower_case}} , function (results) {
 		${subClassName?lower_case}grid_data = results;
-		if(type = "VIEW") {
+		if(type == "VIEW") {
 			init${subClassName}View();
-		}else if(type = "EDIT") {
+		}else if(type == "EDIT") {
 			init${subClassName}Edit();
 		}
 	}, "json");

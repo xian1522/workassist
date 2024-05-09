@@ -59,6 +59,10 @@ public class ${className}KeepAccount {
 			// =======2.获取参数Map=======
 			Map<String, String> paraMap = new HashMap<String, String>();
 
+			//业务类型
+			paraMap.put("tradetype", Constant.BusinessType.OVERDRAFT);
+			// 一级分类
+			paraMap.put("onetype", "DQ");
             // 记账摘要
             paraMap.put("Accremark", accremark);
 			

@@ -14,6 +14,8 @@
 <input type="hidden" id="taskId" name="${className?uncap_first}.taskId" value="<s:property value="${className?uncap_first}.taskId"/>" />
 <input type="hidden" id="curTask" name="${className?uncap_first}.curTask" value="<s:property value="${className?uncap_first}.curTask"/>" />
 <input type="hidden" id="maxTask" name="${className?uncap_first}.maxTask" value="<s:property value="${className?uncap_first}.maxTask"/>" />
+<input type="hidden" id="moduleid" name="${className?uncap_first}.ownedModuleid" value="<s:property value="moduleid"/>" />
+<input type="hidden" name="moduleid" value="<s:property value="moduleid"/>" />
 <div class="view">
 	<fieldset id="_Container_0">
 		<legend>基本信息</legend>

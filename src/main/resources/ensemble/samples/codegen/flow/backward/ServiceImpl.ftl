@@ -528,18 +528,17 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 	}
 
 	public List<${subClassName}> find${subClassName}List(${className} ${className?uncap_first}) throws ServiceException {
-		String methodName = "find${className}A";
+		String methodName = "find${subClassName}List";
 		List<${subClassName}> ${subClassName?uncap_first}List = new ArrayList<${subClassName}>();
 		// 参数定义
 		List<Object> params = new ArrayList<Object>();
 		try {
 			String queryString = "from ${subClassName} as ${subClassName?uncap_first} where 1=1 ";
-			String queryWhere = "";
 			if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
-				queryWhere += " and  ${className?uncap_first}.${pkname?lower_case} = ? ";
+				queryString += " and  ${subClassName?uncap_first}.${pkname?lower_case} = ? ";
 				params.add(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 			}
-			${subClassName?uncap_first}List = baseDao.findByParams(queryString + queryWhere, params.toArray());
+			${subClassName?uncap_first}List = baseDao.findByParams(queryString, params.toArray());
 			// 返回
 			return ${subClassName?uncap_first}List;
 		}catch (DaoException ex) {

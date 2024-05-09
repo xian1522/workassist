@@ -149,6 +149,7 @@ public class ${className}Action extends ActionBase {
         <#if isNewFlow == "是">
             // 流程提交下一步办理主体json字符串转list
             setFlowDealSubjectList(${className?uncap_first});
+
         </#if>
             format${className}ForSave(${className?uncap_first});
             if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
@@ -207,7 +208,10 @@ public class ${className}Action extends ActionBase {
         <#if isNewFlow == "是">
             // 流程提交下一步办理主体json字符串转list
             setFlowDealSubjectList(${className?uncap_first});
+
         </#if>
+            format${className}ForSave(${className?uncap_first});
+
             ResultData rstBiz = new ResultData();
             ResultData rst = new ResultData();
             if (CommonUtil.isNotEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
@@ -337,6 +341,7 @@ public class ${className}Action extends ActionBase {
             flowProcess = taskFlowControlService.getFlowProcessForDeal(workFlowInput, false);
             url = flowProcess.getPageid();
             ${className?uncap_first} = ${className?uncap_first}Service.findById(linkid);
+            url = url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf("_"));
     <#else>
             flowState = getFlowStateByTaskId(taskId);
             url = flowState.getField1();
@@ -684,6 +689,10 @@ public class ${className}Action extends ActionBase {
         String methodName = "find${subClassName}List";
         info(methodName,"查询${subTable.comment!}信息");
         try {
+            if(CommonUtil.isEmpty(${className?uncap_first}.get${pkname?lower_case?cap_first}())) {
+                return methodName;
+            }
+
             List<${subClassName}> ${subClassName?uncap_first}List
                     = ${className?uncap_first}Service.find${subClassName}List(${className?uncap_first});
             for(${subClassName} ${subClassName?uncap_first} : ${subClassName?uncap_first}List){
