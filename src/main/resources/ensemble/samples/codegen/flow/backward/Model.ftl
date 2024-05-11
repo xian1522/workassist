@@ -3,12 +3,13 @@ package com.joyin.ticm${packageName}.model;
 <#list importList as import>
 import ${import};
 </#list>
+import com.joyin.ticm.bean.DataForm;
+
+
 
 /**
  *  ${table.comment!}
  */
-import com.joyin.ticm.bean.DataForm;
-
 public class ${className} extends DataForm {
 
     private static final long serialVersionUID = 1L;

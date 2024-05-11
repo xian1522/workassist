@@ -275,10 +275,8 @@ public class CodeGenController {
                     }else{
                         className = StringUtils.uncapitalize(className);
                     }
-                    generateFilePath += "front/";
-                }else {
-                    generateFilePath += "backward/";
                 }
+
                 if("Model.ftl".equals(templateName)) {
                     generateFilePath += BUSINESS_PATH + packageName + "/model/" + className + ".java";
                 }else if("SubModel.ftl".equals(templateName)){
@@ -287,16 +285,6 @@ public class CodeGenController {
                     generateFilePath += className + ".hbm.xml";
                 }else if("SubHibernate.ftl".equals(templateName)) {
                     generateFilePath += subClassName + ".hbm.xml";
-                }else if("Config.ftl".equals(templateName)){
-                    generateFilePath += className + ".xml";
-                }else if(templateName.indexOf("JavaScript") > 0){
-                    int endIndex = templateName.indexOf("JavaScript");
-                    generateFilePath += "Ticm/WebRoot/javascript" + packageName + "/"
-                            +className + templateName.substring(0, endIndex) + ".js";
-                }else if(templateName.indexOf("Jsp") > 0){
-                    int endIndex = templateName.indexOf("Jsp");
-                    generateFilePath += "Ticm/WebRoot/pages" + packageName + "/"
-                            +className + templateName.substring(0, endIndex) + ".jsp";
                 }else {
                     templateName = StringUtils.substringAfter(templateName,"CountDraw");
 
@@ -314,6 +302,16 @@ public class CodeGenController {
                     }else if("KeepAccount.ftl".equals(templateName)) {
                         generateFilePath += BUSINESS_PATH + "/ka/" + packageName.substring(1, packageName.lastIndexOf("/")) + "/"
                                 + className +templateName.replace("ftl","java");
+                    }else if("Config.ftl".equals(templateName)){
+                        generateFilePath += className + ".xml";
+                    }else if(templateName.indexOf("JavaScript") > 0){
+                        int endIndex = templateName.indexOf("JavaScript");
+                        generateFilePath += "Ticm/WebRoot/javascript" + packageName + "/"
+                                +className + templateName.substring(0, endIndex) + ".js";
+                    }else if(templateName.indexOf("Jsp") > 0){
+                        int endIndex = templateName.indexOf("Jsp");
+                        generateFilePath += "Ticm/WebRoot/pages" + packageName + "/"
+                                +className + templateName.substring(0, endIndex) + ".jsp";
                     }
                 }
 
@@ -382,6 +380,7 @@ public class CodeGenController {
                 Template searchJspTemplate = configuration.getTemplate("SearchJsp.ftl");
                 Template baseTemplate = configuration.getTemplate("BaseJsp.ftl");
                 Template editTemplate = configuration.getTemplate("EditJsp.ftl");
+                Template viewTemplate = configuration.getTemplate("ViewJsp.ftl");
 
                 if(isFlow.getValue().equals("是")) {
                     Template keepAccountTemplate = configuration.getTemplate("KeepAccount.ftl");
@@ -415,6 +414,7 @@ public class CodeGenController {
                 templateList.add(managerJspTemplate);
                 templateList.add(baseTemplate);
                 templateList.add(editTemplate);
+                templateList.add(viewTemplate);
                 templateList.add(searchJspTemplate);
             } else if("COUNTDRAW".equals(templateType)) {
                 Template countdrawEditTemplate = configuration.getTemplate("CountDrawEditJsp.ftl");

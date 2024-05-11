@@ -6,6 +6,10 @@ import ${import};
 
 import com.joyin.ticm.bean.DataForm;
 
+
+/**
+ *  ${table.comment!}
+ */
 public class ${subClassName} extends DataForm {
 
     private static final long serialVersionUID = 1L;
