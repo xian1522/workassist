@@ -22,7 +22,9 @@
 		<table class="tableStyle" formMode="transparent">
 		<#list table.columns as column>
 			<#if column.comment??>
+				<#if column?counter%2 != 0>
 				<tr>
+				</#if>
 					<td width="15%">
 						<#if column.comment?index_of("字典") gt 0 >
 						${column.comment?substring(0,column.comment?index_of("[") - 1)}<s:text name="label.colon"/>
@@ -54,7 +56,9 @@
 							<input type="text" id="${column.name}" name="${className?uncap_first}.${column.name}" value="<s:property value='${className?uncap_first}.${column.name}' />"  class="input_w180"/>
 						</#if>
 					</td>
+				<#if column?counter%2 == 0>
 				</tr>
+				</#if>
 			</#if>
 		</#list>
 		</table>

@@ -80,7 +80,7 @@
                 <select id="effectflag" name="${className?uncap_first}.effectflag"  selWidth="130"  selectedValue="<s:property value="${className?uncap_first}.effectflag"/>" />
             </td>
             <td></td>
-            <td>
+            <td align="right">
                 <button type="button" id="searchButn" onclick="searchHandler();">
                     <span class="icon_find"><s:text name="button.search"/></span>
                 </button>

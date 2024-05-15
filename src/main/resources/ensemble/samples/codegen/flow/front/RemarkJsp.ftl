@@ -8,7 +8,7 @@
                      申请事由<s:text name="label.colon"/>
                  </td>
                  <td width="85%">
-                     <textarea id="remark" name="${className?uncap_first}.remark"  maxnum="200" > <s:property value="${className?uncap_first}.remark"/> </textarea>
+                     <textarea id="remark" name="${className?uncap_first}.remark"  maxnum="200" ><s:property value="${className?uncap_first}.remark"/></textarea>
                  </td>
              </tr>
          </table>

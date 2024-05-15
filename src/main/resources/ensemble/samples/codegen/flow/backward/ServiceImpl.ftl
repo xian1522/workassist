@@ -76,11 +76,11 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 				+ isSubmit);
 
 		ResultData rst = new ResultData();
-		if (CommonUtil.isEmpty(${className?uncap_first}.getReqid())) {
-			String ${pkname?lower_case} = this.getBusinessId(Constant.BusinessIdType.${table.tableName},
-					${className?uncap_first}.getOrgid());
-			${className?uncap_first}.set${pkname?lower_case?cap_first}(${pkname?lower_case});
-		}
+
+		String ${pkname?lower_case} = this.getBusinessId(Constant.BusinessIdType.${table.tableName},
+				${className?uncap_first}.getOrgid());
+		${className?uncap_first}.set${pkname?lower_case?cap_first}(${pkname?lower_case});
+
 		${className?uncap_first}.setLinkid(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 
 	<#if isNewFlow == "是">
@@ -127,6 +127,9 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 				${subClassName?uncap_first}.set${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 				baseDao.save(${subClassName?uncap_first});
 			}
+</#if>
+<#if isNewFlow == "是">
+			rst.setLinkid(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 </#if>
 			
 			rst.setSuccess(true);
@@ -234,6 +237,9 @@ public class ${className}ServiceImpl extends ServiceBase implements ${className}
 				${subClassName?uncap_first}.set${pkname?lower_case?cap_first}(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 				baseDao.save(${subClassName?uncap_first});
 			}
+</#if>
+<#if isNewFlow == "是">
+			rst.setLinkid(${className?uncap_first}.get${pkname?lower_case?cap_first}());
 </#if>
 			rst.setSuccess(true);
 		}

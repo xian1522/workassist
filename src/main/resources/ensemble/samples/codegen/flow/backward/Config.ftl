@@ -66,4 +66,24 @@ VALUES('2101', '${className}Flow', '经办', 1, NULL, '${packageName?replace("."
 INSERT INTO SYS_FLOW_TASK (MODULEID, FLOW_KEY, TASK_NAME, GROUPID, ORGPERMIT, DETAILURL, TASK_ORDER, LSTMNTDATE, LSTMNTUSER, EFFECTFLAG, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, OPORGKEY, OPTTYPE, SERVICENAME)
 VALUES('2101', '${className}Flow', '复核', 1, NULL, '${packageName?replace(".","/")?substring(1)}/flow/${className?uncap_first}Audit_${className?uncap_first}Flow', 2, sysdate, 'gqliu', 'E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
+<#if isNewFlow == "是">
+DELETE FROM SYS_MODULE_BTN WHERE MODULEID = '3101';
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 1, '新增 ', '$("#scrollContent .icon_add").slice(0,1).parent("div").hide();$("#scrollContent .icon_add").slice(0,1).parent("div").next().hide();', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 2, '编辑', '$("#scrollContent .icon_edit").slice(0,1).parent("div").hide();$("#scrollContent .icon_edit").slice(0,1).parent("div").next().hide();', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 3, '删除', '$("#scrollContent .icon_delete").slice(0,1).parent("div").hide();$("#scrollContent .icon_delete").slice(0,1).parent("div").next().hide();', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 4, '查看流程', '$("#scrollContent .icon_viewflow").slice(0,1).parent("div").hide();$("#scrollContent .icon_viewflow").slice(0,1).parent("div").next().hide();', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 5, '办理流程', '$("#scrollContent .icon_ok").slice(0,1).parent("div").hide();$("#scrollContent .icon_ok").slice(0,1).parent("div").next().hide();', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 6, '审批单', '$("#scrollContent .icon_print").slice(0,1).parent("div").hide();$("#scrollContent .icon_print").slice(0,1).parent("div").next().hide();', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 7, '查询', '$("#searchForm .icon_find").slice(0,1).parent("button").hide();$("#searchForm .icon_find").slice(0,1).parent("button").next().hide();', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO SYS_MODULE_BTN (MODULEID, PROCID, BTNNAME, BTNJS, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5) VALUES('3101', 8, '重置', '$("#searchForm .icon_clear").slice(0,1).parent("button").hide();$("#searchForm .icon_clear").slice(0,1).parent("button").next().hide();', NULL, NULL, NULL, NULL, NULL);
 
+delete from SYS_ROLEPERMIT t where t.moduleid IN ('3101') ;
+insert  into SYS_ROLEPERMIT
+select S_SYS_ROLEPERMIT.nextval,ROLEID,'3101' ,'',null,null from SYS_ROLE  where ROLENAME = 'admin1';
+
+INSERT INTO SYS_ROLEPERMIT(ID, ROLEID, MODULEID, PROCID)
+SELECT S_SYS_ROLEPERMIT.nextval, ROLEID, MODULEID, PROCID
+FROM SYS_MODULE_BTN
+LEFT JOIN SYS_ROLE ON ROLENAME = 'admin1'
+where moduleid IN ('3101');
+</#if>

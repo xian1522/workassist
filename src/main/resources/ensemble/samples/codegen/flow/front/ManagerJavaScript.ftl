@@ -150,7 +150,7 @@ $.quiDefaults.Grid.formatters['date'] = function(value, column){
 function add${className}(){
   	openCustomWindow(
 		contextPath +'${packageName?replace(".","/")}/init${className}Add.do?moduleid=' + moduleid,
-		Resource.moduleName+Constant.line+Constant.add, 800, 620);
+		Resource.moduleName+Constant.line+Constant.add, 1000, 600);
 }
 
 //查看流程
@@ -180,7 +180,7 @@ function edit${className}(){
   	openCustomWindow(
 		contextPath +'${packageName?replace(".","/")}/init${className}Edit.do?moduleid=' + moduleid + '&${className?uncap_first}.${pkname?lower_case}=' + rows[0].${pkname?lower_case}
 			+ '&${packageName?uncap_first}.taskId=' + rows[0].taskId,
-		Resource.moduleName+Constant.line+Constant.edit, 800, 580);
+		Resource.moduleName+Constant.line+Constant.edit, 1000, 600);
 }
 
 //删除或批量删除
