@@ -1,15 +1,16 @@
 
-driver = oracle.jdbc.driver.OracleDriver
-url = jdbc:oracle:thin:@192.168.90.213:1521:orcl
-username = SYJZKF0429
-password = SYJZKF0429
+#driver = oracle.jdbc.driver.OracleDriver
+#url = jdbc:oracle:thin:@192.168.60.224:1521:orcl
+#username = HN0331CS
+#password = HN0331CS
+#remarks = true
+
+
+driver = com.ibm.db2.jcc.DB2Driver
+url = jdbc:db2://192.168.70.242:60006/QHCSBS07
+username = ticm
+password = joyin123
 remarks = true
-
-
-#driver = com.ibm.db2.jcc.DB2Driver
-#url = jdbc:db2://192.168.70.242:60006/JXKK0824
-#username = ticm
-#password = joyin123
 
 
 ## 可选配置

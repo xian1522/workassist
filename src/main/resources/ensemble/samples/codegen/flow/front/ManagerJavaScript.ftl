@@ -61,7 +61,7 @@ function init${className}Grid(){
         <#elseif column.isPk()>
         {display: '${column.comment!}', name: '${column.name}', align: 'left',  width: 180,
             render: function (rowdata, rowindex, value, column) {
-                var url = contextPath + '${packageName?replace(".","/")}/init${className}View.do?${className?uncap_first}.reqid=' + value + '&moduleid=' + moduleid;
+                var url = contextPath + '${packageName?replace(".","/")}/init${className}View.do?${className?uncap_first}.${pkname?lower_case}=' + value + '&moduleid=' + moduleid;
                 var title = Resource.moduleName + Constant.line + Constant.view;
                 var link = '<a href="javascript:void(0)" onclick="openCustomWindow(\'' + url + '\',\'' + title + '\',1000,600);">' + value + '</a>';
                 return link;

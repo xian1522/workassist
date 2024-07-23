@@ -1,35 +1,19 @@
 package ensemble.samples.codegen;
 
-import cn.hutool.db.Db;
-import cn.hutool.db.Entity;
 import cn.hutool.db.ds.DSFactory;
-import cn.hutool.db.ds.simple.SimpleDataSource;
-import cn.hutool.db.handler.EntityListHandler;
 import cn.hutool.db.meta.Column;
 import cn.hutool.db.meta.MetaUtil;
 import cn.hutool.db.meta.Table;
-import cn.hutool.db.sql.SqlExecutor;
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.cache.FileTemplateLoader;
-import freemarker.cache.MultiTemplateLoader;
-import freemarker.cache.TemplateLoader;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import wj.template.Template;
+import wj.template.TemplateEngine;
 
 import javax.sql.DataSource;
 import java.io.*;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import java.util.*;
 
 public class CodeGenController {
@@ -202,7 +186,7 @@ public class CodeGenController {
 
                 Writer writer = new OutputStreamWriter(out);
 
-                template.process(root, writer);
+                template.render(root, writer);
 
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);//缓冲
                 String s = "";
@@ -210,7 +194,7 @@ public class CodeGenController {
                 bufferedWriter.flush();
                 bufferedWriter.close();
             }
-        } catch (IOException | TemplateException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -222,6 +206,7 @@ public class CodeGenController {
     /**
      * 生成计提模块代码
      */
+
     public void generateCountDrawCode() {
 
         String tablename = this.cdTablename.getText();
@@ -322,7 +307,7 @@ public class CodeGenController {
 
                 Writer writer = new OutputStreamWriter(out);
 
-                template.process(root, writer);
+                template.render(root, writer);
 
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);//缓冲
                 String s = "";
@@ -330,7 +315,7 @@ public class CodeGenController {
                 bufferedWriter.flush();
                 bufferedWriter.close();
             }
-        } catch (IOException | TemplateException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -339,7 +324,19 @@ public class CodeGenController {
         success.show();
     }
 
+    public List<Template> processTemplate(String templateType) {
+        //1. 创建一个默认的 JetEngine
+        TemplateEngine templateEngine = TemplateEngine.create();
+        //2. 获取一个模板对象 (从默认的 classpath 下面)
+        Template template = templateEngine.getTemplate("ServiceImpl.ftl");
 
+        List<Template> templateList = new ArrayList<>();
+        templateList.add(template);
+
+        return templateList;
+    }
+
+    /**
     public List<Template> processTemplate(String templateType) {
 
         List<Template> templateList = new ArrayList<>();
@@ -464,6 +461,7 @@ public class CodeGenController {
         }
         return templateList;
     }
+     */
 
     public TableGen processDataBaseMeta(String tableName) {
 
