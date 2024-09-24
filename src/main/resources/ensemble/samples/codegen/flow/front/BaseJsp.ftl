@@ -7,7 +7,7 @@
 	}
 
 </script>
-<script src="${r"${pageContext.request.contextPath}"}/javascript${packageName?replace(".","/")}/${className?uncap_first}Edit.js" type="text/javascript"></script>
+<script src="${"${pageContext.request.contextPath}"}/javascript${packageName?replace(".","/")}/${className?uncap_first}Edit.js" type="text/javascript"></script>
 <input type="hidden" id="lstmntdate" name="${className?uncap_first}.lstmntdate" value="<s:property value="${className?uncap_first}.lstmntdate"/>" />
 <input type="hidden" id="createdate" name="${className?uncap_first}.createdate" value="<s:property value="${className?uncap_first}.createdate"/>" />
 <input type="hidden" id="effectflag" name="${className?uncap_first}.effectflag" value="<s:property value="${className?uncap_first}.effectflag"/>" />
@@ -22,8 +22,8 @@
 		<table class="tableStyle" formMode="transparent">
 		<#list table.columns as column>
 			<#if column.comment??>
-				<#if column?counter%2 != 0>
-				<tr>
+				<#if counter%2 != 0>
+			<tr>
 				</#if>
 					<td width="15%">
 						<#if column.comment?index_of("字典") gt 0 >
@@ -56,7 +56,7 @@
 							<input type="text" id="${column.name}" name="${className?uncap_first}.${column.name}" value="<s:property value='${className?uncap_first}.${column.name}' />"  class="input_w180"/>
 						</#if>
 					</td>
-				<#if column?counter%2 == 0>
+				<#if counter%2 == 0>
 				</tr>
 				</#if>
 			</#if>

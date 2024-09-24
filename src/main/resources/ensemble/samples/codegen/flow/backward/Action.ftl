@@ -251,7 +251,7 @@ public class ${className}Action extends ActionBase {
                     results.put(Constant.RESPOND.MESSAGE,MessageUtil.getMessage(MessageUtil.Message.TICM_MESSAGE_SUBMIT_ERROR));
                 }
             }
-<#else >
+<#else>
         if (rstBiz.isSuccess()) {
             results.put(Constant.RESPOND.RESULT, true);
             results.put(Constant.RESPOND.MESSAGE,MessageUtil.getMessage(MessageUtil.Message.TICM_MESSAGE_SUBMIT_SUCCESS));

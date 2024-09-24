@@ -39,7 +39,6 @@ var curpage = {
 function initSelect(){
 <#list table.columns as column>
 	<#if column.comment?? && column.comment?index_of("字典") gt 0 >
-        //${column.comment?substring(0,column.comment?index_of("[") - 1)}
 		getDataDict("#${column.name}", "<#if column.comment??>${column.comment?substring(column.comment?index_of("字典分类") + 5,column.comment?index_of("]"))}</#if>");
 	</#if>
 </#list>

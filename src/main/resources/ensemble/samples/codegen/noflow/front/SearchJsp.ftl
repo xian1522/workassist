@@ -9,7 +9,7 @@
                 <s:text name="label.organ.no"></s:text><s:text name="label.colon"></s:text>
             </td>
             <td width="210px">
-                <div class="suggestion"   url="${r"${pageContext.request.contextPath}"}/util/getOrganListP.do" showList="true" inputWidth="130" autoCheck="false" id="suggestorgid" ></div>
+                <div class="suggestion"   url="${"${pageContext.request.contextPath}"}/util/getOrganListP.do" showList="true" inputWidth="130" autoCheck="false" id="suggestorgid" ></div>
             </td>
             <td width="80px" >
                 <s:text name="label.organ.name"></s:text><s:text name="label.colon"></s:text>

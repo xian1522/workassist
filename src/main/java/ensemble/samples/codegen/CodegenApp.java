@@ -40,6 +40,11 @@ public class CodegenApp extends Application {
         controller.getIsSafeFlow().getItems().addAll("是","否");
         controller.getIsFlow().getItems().addAll("是", "否");
         controller.getIsNewFlow().getItems().addAll("是", "否");
+        //设置默认值
+        controller.getIsKeepAccount().setValue("否");
+        controller.getIsSafeFlow().setValue("否");
+        controller.getIsFlow().setValue("否");
+        controller.getIsNewFlow().setValue("否");
     }
 
     public static void main(String[] args) {

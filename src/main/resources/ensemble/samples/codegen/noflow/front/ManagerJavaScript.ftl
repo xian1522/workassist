@@ -44,7 +44,7 @@ function init${className}Grid(){
     var columns = [
 <#list table.columns as column>
     <#if column.comment??>
-        <#if column.typeName='BigDecimal'>
+        <#if column.typeName == 'BigDecimal'>
             { display: '${column.comment!}', name: '${column.name}', align: 'right', width: 120,
                 render: function (rowdata, rowindex, value, column){
                     if( value != null){

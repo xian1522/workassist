@@ -50,7 +50,7 @@ function init${className}Grid(){
         {display: '状态', name: 'stateName', align: 'left', width: 180,frozen: "true"},
 <#list table.columns as column>
     <#if column.comment??>
-        <#if column.typeName='BigDecimal'>
+        <#if column.typeName == 'BigDecimal'>
         {display: '${column.comment!}', name: '${column.name}', align: 'right', width: 120,
             render: function (rowdata, rowindex, value, column){
                 if( value != null){
@@ -68,7 +68,7 @@ function init${className}Grid(){
             }
         },
         <#else>
-        { display: '<#if column.comment?index_of("字典") gt 0 >${column.comment?substring(0,column.comment?index_of("[") - 1)}<#else>${column.comment!}</#if>', name: '${column.name}', align: <#if column.typeName= 'Date'>'right'<#else>'left'</#if>, <#if column.typeName= 'Date'>type: 'date',</#if> width: 120 },
+        { display: '<#if column.comment?index_of("字典") gt 0 >${column.comment?substring(0,column.comment?index_of("[") - 1)}<#else>${column.comment!}</#if>', name: '${column.name}', align: <#if column.typeName == 'Date'>'right'<#else>'left'</#if>, <#if column.typeName == 'Date'>type: 'date',</#if> width: 120 },
         </#if>
     </#if>
 </#list>
